@@ -7,9 +7,9 @@ namespace TaskManagementAPI.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-        public DbSet<User> Users { get; set; }
-        public DbSet<Category> Categories { get; set; }
-        public DbSet<TaskItem> Tasks { get; set; }
+        public DbSet<User> Users { get; set; } = null!;
+        public DbSet<Category> Categories { get; set; } = null!;
+        public DbSet<TaskItem> Tasks { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -56,7 +56,7 @@ namespace TaskManagementAPI.Data
                     .WithMany(p => p.Tasks)
                     .HasForeignKey(d => d.CategoryId)
                     .OnDelete(DeleteBehavior.SetNull);
-            });
+                });
         }
     }
 }
