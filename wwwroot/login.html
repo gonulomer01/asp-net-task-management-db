@@ -12,8 +12,7 @@
     <style>
         :root {
             --bg-base: #ffffff;
-            --bg-side: #fafafa;
-            --text-title: #388ff9;
+            --bg-side: #052c5e;
             --text-main: #262626;
             --text-muted: #8e8e8e;
             --border: #dbdbdb;
@@ -23,8 +22,7 @@
         }
         html.dark {
             --bg-base: #0b0f19;
-            --bg-side: #111827;
-            --text-title: #388ff9;
+            --bg-side: #0b1325;
             --text-main: #f3f4f6;
             --text-muted: #9ca3af;
             --border: #1f2937;
@@ -36,8 +34,8 @@
         .top-nav { position: absolute; top: 24px; right: 24px; z-index: 10; }
         .theme-btn { background: transparent; color: var(--text-main); border: 1px solid var(--border); padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 13px; font-weight: 600; }
         .split-layout { display: flex; min-height: 100vh; }
-        .brand-side { flex: 1.2; background-color: var(--bg-side); display: flex; align-items: center; justify-content: center; padding: 40px; box-sizing: border-box; }
-        .brand-heading { font-size: 72px; font-weight: 800; color: var(--text-title); letter-spacing: -2px; margin: 0; text-align: center; }
+        .brand-side { flex: 1.2; background-color: var(--bg-side); display: flex; align-items: center; justify-content: center; padding: 40px; box-sizing: border-box; transition: background-color 0.3s; }
+        .brand-logo { max-width: 90%; max-height: 80vh; object-fit: contain; display: block; }
         .form-side { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px; box-sizing: border-box; }
         .form-container { width: 100%; max-width: 400px; }
         form { display: flex; flex-direction: column; gap: 20px; }
@@ -62,7 +60,7 @@
 
     <div class="split-layout">
         <div class="brand-side">
-            <h1 class="brand-heading">Giriş yap</h1>
+            <img src="image.png" alt="Logo" class="brand-logo">
         </div>
         <div class="form-side">
             <div class="form-container">
