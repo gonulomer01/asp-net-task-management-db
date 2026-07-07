@@ -10,36 +10,52 @@
         }
     </script>
     <style>
-        body { font-family: sans-serif; margin: 20px; background-color: #ffffff; color: #000000; }
-        .main-box { max-w: 500px; border: 1px solid #000000; padding: 15px; margin-top: 20px; }
-        form { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
-        input, select { padding: 6px; border: 1px solid #000000; font-size: 14px; }
-        button { padding: 6px; border: 1px solid #000000; background: #ffffff; cursor: pointer; font-size: 13px; }
-        button:hover { background: #eeeeee; }
-        .list-item { border-bottom: 1px dashed #000000; padding: 8px 0; }
-        .item-actions { margin-top: 5px; display: flex; gap: 5px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f8fafc; color: #0f172a; margin: 0; padding: 24px; }
+        .main-container { display: flex; gap: 24px; flex-wrap: wrap; margin-top: 20px; align-items: flex-start; }
+        .form-box { width: 360px; background: #ffffff; border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .list-box { flex: 1; min-width: 400px; background: #ffffff; border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        h2, h3 { margin-top: 0; color: #334155; font-size: 16px; margin-bottom: 16px; }
+        form { display: flex; flex-direction: column; gap: 12px; }
+        input, select { padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; background: #ffffff; }
+        input:focus, select:focus { border-color: #2563eb; outline: none; }
+        button { padding: 8px 14px; border: 1px solid #cbd5e1; border-radius: 6px; background: #ffffff; cursor: pointer; font-size: 13px; font-weight: 500; transition: all 0.2s; }
+        button:hover { background: #f1f5f9; border-color: #94a3b8; }
+        .blue-btn { background: #2563eb; color: #ffffff; border: none; font-weight: 600; }
+        .blue-btn:hover { background: #1d4ed8; }
+        .danger-btn { color: #ef4444; border-color: #fca5a5; }
+        .danger-btn:hover { background: #fef2f2; border-color: #ef4444; }
+        .list-item { padding: 14px; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 12px; background: #f8fafc; display: flex; justify-content: space-between; align-items: center; }
+        .item-title { font-weight: 600; font-size: 14px; color: #1e293b; }
+        .item-desc { color: #64748b; font-size: 13px; margin-top: 2px; }
+        .role-tag { font-size: 11px; padding: 2px 6px; border-radius: 4px; font-weight: 600; background: #e2e8f0; color: #334155; margin-left: 6px; }
+        .item-actions { display: flex; gap: 6px; }
         .hidden { display: none; }
     </style>
 </head>
 <body>
 
-    <button onclick="window.location.href='/index.html'">← Panele Geri Dön</button>
+    <button onclick="window.location.href='/index.html'">← Geri Dön</button>
     
-    <div class="main-box">
-        <h2 id="userFormTitle">Kullanıcı Ekle</h2>
-        <form id="userForm">
-            <input type="text" id="userUsername" placeholder="Kullanıcı Adı *" required>
-            <input type="password" id="userPassword" placeholder="Şifre *" required>
-            <input type="email" id="userEmail" placeholder="E-posta">
-            <select id="userRole">
-                <option value="User">User</option>
-                <option value="Admin">Admin</option>
-            </select>
-            <button type="submit" id="userSubmitBtn">Kaydet</button>
-            <button type="button" id="userCancelBtn" class="hidden" onclick="resetUserForm()">Vazgeç</button>
-        </form>
-        <h3>Kullanıcı Listesi</h3>
-        <div id="userList"></div>
+    <div class="main-container">
+        <div class="form-box">
+            <h2 id="userFormTitle">Kullanıcı Ekle</h2>
+            <form id="userForm">
+                <input type="text" id="userUsername" placeholder="Kullanıcı Adı *" required>
+                <input type="password" id="userPassword" placeholder="Şifre *" required>
+                <input type="email" id="userEmail" placeholder="E-posta">
+                <select id="userRole">
+                    <option value="User">User</option>
+                    <option value="Admin">Admin</option>
+                </select>
+                <button type="submit" id="userSubmitBtn" class="blue-btn">Kaydet</button>
+                <button type="button" id="userCancelBtn" class="hidden" onclick="resetUserForm()">Vazgeç</button>
+            </form>
+        </div>
+
+        <div class="list-box">
+            <h3>Sistem Kullanıcıları</h3>
+            <div id="userList"></div>
+        </div>
     </div>
 
     <script>
@@ -62,15 +78,17 @@
             const res = await fetch('/api/users');
             const data = await res.json();
             const container = document.getElementById('userList');
-            container.innerHTML = data.length === 0 ? '<p>Kayıt yok.</p>' : '';
+            container.innerHTML = data.length === 0 ? '<p style="color:#64748b; font-size:14px;">Kayıtlı kullanıcı bulunmuyor.</p>' : '';
             data.forEach(x => {
                 container.innerHTML += `
                     <div class="list-item">
-                        <div><strong>ID: #${x.id}</strong> - ${escapeHtml(x.username)} (${escapeHtml(x.role)})</div>
-                        <div>${escapeHtml(x.email || '')}</div>
+                        <div>
+                            <div class="item-title">${escapeHtml(x.username)} <span class="role-tag">${escapeHtml(x.role)}</span></div>
+                            <div class="item-desc">${escapeHtml(x.email || 'E-posta belirtilmemiş.')}</div>
+                        </div>
                         <div class="item-actions">
-                            <button onclick="startEditUser(${x.id}, '${escapeHtml(x.username)}', '${escapeHtml(x.password)}', '${escapeHtml(x.email || '')}', '${escapeHtml(x.role)}')">Düzelt</button>
-                            <button onclick="deleteUser(${x.id})">Sil</button>
+                            <button onclick="startEditUser(${x.id}, '${escapeHtml(x.username)}', '${escapeHtml(x.password)}', '${escapeHtml(x.email || '')}', '${escapeHtml(x.role)}')">Düzenle</button>
+                            <button class="danger-btn" onclick="deleteUser(${x.id})">Sil</button>
                         </div>
                     </div>`;
             });
@@ -96,7 +114,7 @@
 
         function startEditUser(id, username, password, email, role) {
             editingUserId = id;
-            document.getElementById('userFormTitle').textContent = "Kullanıcı Güncelle (ID: #" + id + ")";
+            document.getElementById('userFormTitle').textContent = "Kullanıcıyı Düzenle";
             document.getElementById('userUsername').value = username;
             document.getElementById('userPassword').value = password;
             document.getElementById('userEmail').value = email;
@@ -112,7 +130,7 @@
         }
 
         async function deleteUser(id) {
-            if(!confirm("Emin misiniz?")) return;
+            if(!confirm("Kullanıcıyı silmek istediğinize emin misiniz?")) return;
             const res = await fetch(`/api/users/${id}`, {method: 'DELETE', headers: getAuthHeaders()});
             if(res.ok) { fetchUsers(); }
         }

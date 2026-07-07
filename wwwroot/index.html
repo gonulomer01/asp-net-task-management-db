@@ -10,48 +10,69 @@
         }
     </script>
     <style>
-        body { font-family: sans-serif; margin: 20px; background-color: #ffffff; color: #000000; }
-        .nav-bar { display: flex; gap: 10px; margin: 15px 0; }
-        .main-box { max-w: 600px; border: 1px solid #000000; padding: 15px; margin-top: 20px; }
-        form { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
-        input, textarea, select { padding: 6px; border: 1px solid #000000; font-size: 14px; }
-        button { padding: 6px; border: 1px solid #000000; background: #ffffff; cursor: pointer; font-size: 13px; }
-        button:hover { background: #eeeeee; }
-        .list-item { border-bottom: 1px dashed #000000; padding: 8px 0; }
-        .item-actions { margin-top: 5px; display: flex; gap: 5px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f8fafc; color: #0f172a; margin: 0; padding: 24px; }
+        .header-area { display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 16px 24px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 24px; }
+        h1 { margin: 0; font-size: 20px; color: #1e293b; }
+        .nav-bar { display: flex; gap: 12px; margin-bottom: 24px; }
+        .main-container { display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; }
+        .form-box { width: 360px; background: #ffffff; border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .list-box { flex: 1; min-width: 400px; background: #ffffff; border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        h2, h3 { margin-top: 0; color: #334155; font-size: 16px; margin-bottom: 16px; }
+        form { display: flex; flex-direction: column; gap: 12px; }
+        input, textarea, select { padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; background: #ffffff; }
+        input:focus, textarea:focus, select:focus { border-color: #4f46e5; outline: none; }
+        button { padding: 8px 14px; border: 1px solid #cbd5e1; border-radius: 6px; background: #ffffff; cursor: pointer; font-size: 13px; font-weight: 500; transition: all 0.2s; }
+        button:hover { background: #f1f5f9; border-color: #94a3b8; }
+        .primary-btn { background: #4f46e5; color: #ffffff; border: none; font-weight: 600; }
+        .primary-btn:hover { background: #4338ca; }
+        .danger-btn { color: #ef4444; border-color: #fca5a5; }
+        .danger-btn:hover { background: #fef2f2; border-color: #ef4444; }
+        .list-item { padding: 16px; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 12px; background: #f8fafc; }
+        .item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .item-title { font-weight: 600; font-size: 15px; color: #1e293b; }
+        .badge { font-size: 11px; padding: 3px 8px; border-radius: 12px; font-weight: 600; }
+        .badge-pending { background: #fef3c7; color: #d97706; }
+        .badge-completed { background: #dcfce7; color: #15803d; }
+        .item-desc { color: #64748b; font-size: 13px; margin-bottom: 10px; }
+        .item-meta { font-size: 11px; color: #94a3b8; border-top: 1px dashed #e2e8f0; padding-top: 8px; display: flex; gap: 16px; }
+        .item-actions { display: flex; gap: 8px; margin-top: 12px; }
         .hidden { display: none; }
     </style>
 </head>
 <body>
 
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-        <h1>Yönetim Paneli (<span id="topUsername"></span>)</h1>
-        <button onclick="logout()">Çıkış Yap</button>
+    <div class="header-area">
+        <h1>Dashboard (<span id="topUsername"></span>)</h1>
+        <button class="danger-btn" onclick="logout()">Çıkış Yap</button>
     </div>
-    <hr>
 
     <div class="nav-bar">
         <button id="btnManageCategories" class="hidden" onclick="window.location.href='/categories.html'">Kategorileri Yönet</button>
         <button id="btnManageUsers" class="hidden" onclick="window.location.href='/users.html'">Kullanıcıları Yönet</button>
-        <button onclick="window.location.href='/profile.html'">Profilimi Düzenle</button>
+        <button onclick="window.location.href='/profile.html'">Profil Ayarları</button>
     </div>
 
-    <div class="main-box">
-        <h2 id="taskFormTitle">Görev Ekle</h2>
-        <form id="taskForm">
-            <input type="text" id="taskTitle" placeholder="Görev Başlığı *" required>
-            <select id="taskUserId" required></select>
-            <select id="taskCategoryId" required></select>
-            <select id="taskStatus">
-                <option value="Pending">Pending</option>
-                <option value="Completed">Completed</option>
-            </select>
-            <textarea id="taskDescription" placeholder="Açıklama" rows="2"></textarea>
-            <button type="submit" id="taskSubmitBtn">Kaydet</button>
-            <button type="button" id="taskCancelBtn" class="hidden" onclick="resetTaskForm()">Vazgeç</button>
-        </form>
-        <h3>Görev Listesi</h3>
-        <div id="taskList"></div>
+    <div class="main-container">
+        <div class="form-box">
+            <h2 id="taskFormTitle">Yeni Görev Tanımla</h2>
+            <form id="taskForm">
+                <input type="text" id="taskTitle" placeholder="Görev Başlığı *" required>
+                <select id="taskUserId" required></select>
+                <select id="taskCategoryId" required></select>
+                <select id="taskStatus">
+                    <option value="Pending">Pending</option>
+                    <option value="Completed">Completed</option>
+                </select>
+                <textarea id="taskDescription" placeholder="Görev detayları ve açıklaması..." rows="3"></textarea>
+                <button type="submit" id="taskSubmitBtn" class="primary-btn">Görevi Kaydet</button>
+                <button type="button" id="taskCancelBtn" class="hidden" onclick="resetTaskForm()">Vazgeç</button>
+            </form>
+        </div>
+
+        <div class="list-box">
+            <h3>Görev Havuzu</h3>
+            <div id="taskList"></div>
+        </div>
     </div>
 
     <script>
@@ -124,19 +145,24 @@
             const res = await fetch('/api/tasks', { headers: getAuthHeaders() });
             const data = await res.json();
             const container = document.getElementById('taskList');
-            container.innerHTML = data.length === 0 ? '<p>Kayıt yok.</p>' : '';
+            container.innerHTML = data.length === 0 ? '<p style="color:#64748b; font-size:14px;">Henüz atanmış bir görev bulunmuyor.</p>' : '';
             data.forEach(x => {
+                const badgeClass = x.status === 'Completed' ? 'badge-completed' : 'badge-pending';
                 container.innerHTML += `
                     <div class="list-item">
-                        <div><strong>ID: #${x.id} - ${escapeHtml(x.title)}</strong> [${escapeHtml(x.status)}]</div>
-                        <div>${escapeHtml(x.description)}</div>
-                        <div style="font-size: 11px; color: #555555; margin-top: 3px;">
-                            Sorumlu: ${escapeHtml(x.userName)} (ID: ${x.userId}) | 
-                            Kategori: ${escapeHtml(x.categoryName) || 'Yok'} (ID: ${x.categoryId || 'Yok'})
+                        <div class="item-header">
+                            <span class="item-title">${escapeHtml(x.title)}</span>
+                            <span class="badge ${badgeClass}">${escapeHtml(x.status)}</span>
+                        </div>
+                        <div class="item-desc">${escapeHtml(x.description || 'Açıklama girilmemiş.')}</div>
+                        <div class="item-meta">
+                            <span>👤 Sorumlu: ${escapeHtml(x.userName)}</span>
+                            <span>📁 Kategori: ${escapeHtml(x.categoryName || 'Yok')}</span>
+                            <span>🆔 ID: #${x.id}</span>
                         </div>
                         <div class="item-actions">
-                            <button onclick="startEditTask(${x.id}, '${escapeHtml(x.title)}', ${x.userId}, '${x.categoryId || ''}', '${escapeHtml(x.status)}', '${escapeHtml(x.description)}')">Düzelt</button>
-                            <button onclick="deleteTask(${x.id})">Sil</button>
+                            <button onclick="startEditTask(${x.id}, '${escapeHtml(x.title)}', ${x.userId}, '${x.categoryId || ''}', '${escapeHtml(x.status)}', '${escapeHtml(x.description)}')">Düzenle</button>
+                            <button class="danger-btn" onclick="deleteTask(${x.id})">Sil</button>
                         </div>
                     </div>`;
             });
@@ -149,7 +175,6 @@
             const categoryId = document.getElementById('taskCategoryId').value ? parseInt(document.getElementById('taskCategoryId').value) : null;
             const status = document.getElementById('taskStatus').value;
             const description = document.getElementById('taskDescription').value;
-            
             const payload = { title, userId, categoryId, status, description };
             if (editingTaskId) payload.id = editingTaskId;
 
@@ -163,7 +188,7 @@
 
         function startEditTask(id, title, userId, categoryId, status, description) {
             editingTaskId = id;
-            document.getElementById('taskFormTitle').textContent = "Görev Güncelle (ID: #" + id + ")";
+            document.getElementById('taskFormTitle').textContent = "Görevi Düzenle (ID: #" + id + ")";
             document.getElementById('taskTitle').value = title;
             document.getElementById('taskUserId').value = userId;
             document.getElementById('taskCategoryId').value = categoryId;
@@ -174,14 +199,14 @@
 
         function resetTaskForm() {
             editingTaskId = null;
-            document.getElementById('taskFormTitle').textContent = "Görev Ekle";
+            document.getElementById('taskFormTitle').textContent = "Yeni Görev Tanımla";
             document.getElementById('taskCancelBtn').classList.add('hidden');
             document.getElementById('taskForm').reset();
             populateDropdowns();
         }
 
         async function deleteTask(id) {
-            if(!confirm("Emin misiniz?")) return;
+            if(!confirm("Bu görevi silmek istediğinize emin misiniz?")) return;
             const res = await fetch(`/api/tasks/${id}`, {method: 'DELETE', headers: getAuthHeaders()});
             if(res.ok) fetchTasks();
         }
