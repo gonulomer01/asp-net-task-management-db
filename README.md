@@ -14,11 +14,11 @@ Uygulama, ön yüz ve arka yüz bileşenlerinin tamamen ayrıldığı (Decoupled
 ### 1. Kimlik Doğrulama ve Rol Tabanlı Yetkilendirme (Authentication & RBAC)
 - **Doğrudan Bağlantı Engeli (Auth Guard):** Sayfaların en tepesine yerleştirilen JavaScript kontrol blokları sayesinde, sisteme giriş yapmamış kullanıcıların URL yazarak içeri sızması tarayıcı düzeyinde kesin olarak engellenmiştir.
 - **Dinamik Yetkilendirme Paneli:** `User` rolündeki standart kullanıcılar sisteme giriş yaptığında kullanıcı ekleme ve kategori yönetimi butonları DOM üzerinden kaldırılır. Kullanıcılar yalnızca kendilerine atanan görevleri görebilir ve yalnızca kendileri adına görev ekleyebilirler. `Admin` rolü ise tüm alt yönetim panellerine tam erişim ve rol değiştirme hakkına sahiptir.
-- **Kayıt Güvenliği:** Yeni kullanıcı kayıt ekranında kamuya açık rol seçimi engellenmiş, tüm kayıtlar varsayılan olarak `User` yetkisiyle sınırlandırılmıştır.
+- **Kayıt Güvenliği:** Yeni kullanıcı kayıt ekranında admin rol seçimi engellenmiş, tüm kayıtlar varsayılan olarak `User` yetkisiyle sınırlandırılmıştır.
 
 ### 2. Siber Saldırı Korumaları
 - **SQL Injection Koruması:** Veritabanı sorguları oluşturulurken ham SQL metin birleştirmeleri yerine tamamen Entity Framework Core (LINQ) mekanizması kullanılmıştır. Bu yapı sorguları parametrik olarak SQL Server'a ilettiği için dışarıdan gelebilecek zararlı SQL komutlarını tamamen etkisiz hale getirir.
-- **XSS (Cross-Site Scripting) Koruması:** Kullanıcıların veri alanlarına zararlı JavaScript kodları enjekte ederek diğer kullanıcıların tarayıcılarını sabote etmesini önlemek amacıyla frontend mimarisine `escapeHtml` fonksiyonu entegre edilmiştir. Girdiler görsel entitilere dönüştürülerek güvenli hale getirilir.
+- **XSS (Cross-Site Scripting) Koruması:** Kullanıcıların veri alanlarına zararlı  kodlar enjekte ederek diğer kullanıcıların tarayıcılarını sabote etmesini önlemek amacıyla frontend mimarisine `escapeHtml` fonksiyonu entegre edilmiştir. Girdiler görsel entitylere dönüştürülerek güvenli hale getirilir.
 
 ## Sistem Kurulum Kılavuzu
 
