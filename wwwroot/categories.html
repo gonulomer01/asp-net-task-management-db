@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kategori Yönetimi</title>
+    <script>
+        if (!localStorage.getItem('userId') || localStorage.getItem('userRole') !== 'Admin') {
+            window.location.href = '/index.html';
+        }
+    </script>
+    <style>
+        body { font-family: sans-serif; margin: 20px; background-color: #ffffff; color: #000000; }
+        .main-box { max-w: 500px; border: 1px solid #000000; padding: 15px; margin-top: 20px; }
+        form { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
+        input { padding: 6px; border: 1px solid #000000; font-size: 14px; }
+        button { padding: 6px; border: 1px solid #000000; background: #ffffff; cursor: pointer; font-size: 13px; }
+        button:hover { background: #eeeeee; }
+        .list-item { border-bottom: 1px dashed #000000; padding: 8px 0; }
+        .item-actions { margin-top: 5px; display: flex; gap: 5px; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <button onclick="window.location.href='/index.html'">← Panele Geri Dön</button>
+    
+    <div class="main-box">
+        <h2 id="categoryFormTitle">Kategori Ekle</h2>
+        <form id="categoryForm">
+            <input type="text" id="categoryName" placeholder="Kategori Adı *" required>
+            <input type="text" id="categoryDescription" placeholder="Açıklama">
+            <button type="submit" id="categorySubmitBtn">Kaydet</button>
+            <button type="button" id="categoryCancelBtn" class="hidden" onclick="resetCategoryForm()">Vazgeç</button>
+        </form>
+        <h3>Kategori Listesi</h3>
+        <div id="categoryList"></div>
+    </div>
+
+    <script>
+        let editingCategoryId = null;
+
+        function getAuthHeaders() {
+            return {
+                'Content-Type': 'application/json',
+                'X-User-Id': localStorage.getItem('userId'),
+                'X-User-Role': localStorage.getItem('userRole')
+            };
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        async function fetchCategories() {
+            const res = await fetch('/api/categories');
+            const data = await res.json();
+            const container = document.getElementById('categoryList');
+            container.innerHTML = data.length === 0 ? '<p>Kayıt yok.</p>' : '';
+            data.forEach(x => {
+                container.innerHTML += `
+                    <div class="list-item">
+                        <div><strong>ID: #${x.id}</strong> - ${escapeHtml(x.name)}</div>
+                        <div>${escapeHtml(x.description || '')}</div>
+                        <div class="item-actions">
+                            <button onclick="startEditCategory(${x.id}, '${escapeHtml(x.name)}', '${escapeHtml(x.description || '')}')">Düzelt</button>
+                            <button onclick="deleteCategory(${x.id})">Sil</button>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        document.getElementById('categoryForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('categoryName').value;
+            const description = document.getElementById('categoryDescription').value;
+            const payload = { name, description };
+            if (editingCategoryId) payload.id = editingCategoryId;
+
+            const res = await fetch(editingCategoryId ? `/api/categories/${editingCategoryId}` : '/api/categories', {
+                method: editingCategoryId ? 'PUT' : 'POST',
+                headers: getAuthHeaders(),
+                body: JSON.stringify(payload)
+            });
+            if(res.ok) { resetCategoryForm(); fetchCategories(); }
+        });
+
+        function startEditCategory(id, name, description) {
+            editingCategoryId = id;
+            document.getElementById('categoryFormTitle').textContent = "Kategori Güncelle (ID: #" + id + ")";
+            document.getElementById('categoryName').value = name;
+            document.getElementById('categoryDescription').value = description;
+            document.getElementById('categoryCancelBtn').classList.remove('hidden');
+        }
+
+        function resetCategoryForm() {
+            editingCategoryId = null;
+            document.getElementById('categoryFormTitle').textContent = "Kategori Ekle";
+            document.getElementById('categoryCancelBtn').classList.add('hidden');
+            document.getElementById('categoryForm').reset();
+        }
+
+        async function deleteCategory(id) {
+            if(!confirm("Emin misiniz?")) return;
+            const res = await fetch(`/api/categories/${id}`, {method: 'DELETE', headers: getAuthHeaders()});
+            if(res.ok) { fetchCategories(); }
+        }
+
+        fetchCategories();
+    </script>
+</body>
+</html>

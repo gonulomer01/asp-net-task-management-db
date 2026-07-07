@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profilimi Düzenle</title>
+    <script>
+        if (!localStorage.getItem('userId')) {
+            window.location.href = '/login.html';
+        }
+    </script>
+    <style>
+        body { font-family: sans-serif; margin: 20px; background-color: #ffffff; color: #000000; }
+        .main-box { max-w: 400px; border: 1px solid #000000; padding: 15px; margin-top: 20px; }
+        form { display: flex; flex-direction: column; gap: 8px; }
+        input { padding: 6px; border: 1px solid #000000; font-size: 14px; }
+        button { padding: 6px; border: 1px solid #000000; background: #ffffff; cursor: pointer; font-size: 13px; }
+        button:hover { background: #eeeeee; }
+    </style>
+</head>
+<body>
+
+    <button onclick="window.location.href='/index.html'">← Panele Geri Dön</button>
+
+    <div class="main-box">
+        <h2>Profil Bilgilerim</h2>
+        <form id="profileForm">
+            <input type="text" id="profUsername" placeholder="Kullanıcı Adı *" required>
+            <input type="password" id="profPassword" placeholder="Yeni/Mevcut Şifre *" required>
+            <input type="email" id="profEmail" placeholder="E-posta">
+            <button type="submit">Değişiklikleri Kaydet</button>
+        </form>
+    </div>
+
+    <script>
+        const loggedInUserId = localStorage.getItem('userId');
+        const loggedInUserRole = localStorage.getItem('userRole');
+
+        async function loadProfileData() {
+            const res = await fetch('/api/users');
+            const users = await res.json();
+            const me = users.find(u => u.id == loggedInUserId);
+            
+            if (me) {
+                document.getElementById('profUsername').value = me.username;
+                document.getElementById('profPassword').value = me.password;
+                document.getElementById('profEmail').value = me.email || '';
+            }
+        }
+
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('profUsername').value;
+            const password = document.getElementById('profPassword').value;
+            const email = document.getElementById('profEmail').value;
+
+            const payload = {
+                id: parseInt(loggedInUserId),
+                username: username,
+                password: password,
+                email: email,
+                role: loggedInUserRole
+            };
+
+            const res = await fetch(`/api/users/${loggedInUserId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-User-Id': loggedInUserId,
+                    'X-User-Role': loggedInUserRole
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                localStorage.setItem('username', username);
+                alert("Profil bilgileriniz başarıyla güncellendi.");
+                window.location.href = '/index.html';
+            } else {
+                alert("Güncelleme sırasında bir hata oluştu.");
+            }
+        });
+
+        loadProfileData();
+    </script>
+</body>
+</html>

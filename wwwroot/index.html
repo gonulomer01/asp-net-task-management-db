@@ -1,264 +1,141 @@
 <!DOCTYPE html>
 <html lang="tr">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yönetim Paneli</title>
+    <script>
+        if (!localStorage.getItem('userId')) {
+            window.location.href = '/login.html';
+        }
+    </script>
     <style>
-        body {
-            font-family: sans-serif;
-            margin: 20px;
-            background-color: #ffffff;
-            color: #000000;
-        }
-
-        .container {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .section {
-            flex: 1;
-            min-width: 300px;
-            border: 1px solid #000000;
-            padding: 15px;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 15px;
-        }
-
-        input,
-        textarea,
-        select {
-            padding: 6px;
-            border: 1px solid #000000;
-            font-size: 14px;
-        }
-
-        button {
-            padding: 6px;
-            border: 1px solid #000000;
-            background: #ffffff;
-            cursor: pointer;
-            font-size: 13px;
-        }
-
-        button:hover {
-            background: #eeeeee;
-        }
-
-        .list-item {
-            border-bottom: 1px dashed #000000;
-            padding: 8px 0;
-        }
-
-        .item-actions {
-            margin-top: 5px;
-            display: flex;
-            gap: 5px;
-        }
-
-        .hidden {
-            display: none;
-        }
+        body { font-family: sans-serif; margin: 20px; background-color: #ffffff; color: #000000; }
+        .nav-bar { display: flex; gap: 10px; margin: 15px 0; }
+        .main-box { max-w: 600px; border: 1px solid #000000; padding: 15px; margin-top: 20px; }
+        form { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
+        input, textarea, select { padding: 6px; border: 1px solid #000000; font-size: 14px; }
+        button { padding: 6px; border: 1px solid #000000; background: #ffffff; cursor: pointer; font-size: 13px; }
+        button:hover { background: #eeeeee; }
+        .list-item { border-bottom: 1px dashed #000000; padding: 8px 0; }
+        .item-actions { margin-top: 5px; display: flex; gap: 5px; }
+        .hidden { display: none; }
     </style>
 </head>
-
 <body>
 
-    <h1>Yönetim Paneli</h1>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h1>Yönetim Paneli (<span id="topUsername"></span>)</h1>
+        <button onclick="logout()">Çıkış Yap</button>
+    </div>
     <hr>
-    <br>
 
-    <div class="container">
+    <div class="nav-bar">
+        <button id="btnManageCategories" class="hidden" onclick="window.location.href='/categories.html'">Kategorileri Yönet</button>
+        <button id="btnManageUsers" class="hidden" onclick="window.location.href='/users.html'">Kullanıcıları Yönet</button>
+        <button onclick="window.location.href='/profile.html'">Profilimi Düzenle</button>
+    </div>
 
-        <div class="section">
-            <h2 id="userFormTitle">Kullanıcı Ekle</h2>
-            <form id="userForm">
-                <input type="text" id="userUsername" placeholder="Kullanıcı Adı *" required>
-                <input type="email" id="userEmail" placeholder="E-posta">
-                <button type="submit" id="userSubmitBtn">Kaydet</button>
-                <button type="button" id="userCancelBtn" class="hidden" onclick="resetUserForm()">Vazgeç</button>
-            </form>
-            <h3>Kullanıcı Listesi</h3>
-            <div id="userList"></div>
-        </div>
-
-        <div class="section">
-            <h2 id="categoryFormTitle">Kategori Ekle</h2>
-            <form id="categoryForm">
-                <input type="text" id="categoryName" placeholder="Kategori Adı *" required>
-                <input type="text" id="categoryDescription" placeholder="Açıklama">
-                <button type="submit" id="categorySubmitBtn">Kaydet</button>
-                <button type="button" id="categoryCancelBtn" class="hidden"
-                    onclick="resetCategoryForm()">Vazgeç</button>
-            </form>
-            <h3>Kategori Listesi</h3>
-            <div id="categoryList"></div>
-        </div>
-
-        <div class="section">
-            <h2 id="taskFormTitle">Görev Ekle</h2>
-            <form id="taskForm">
-                <input type="text" id="taskTitle" placeholder="Görev Başlığı *" required>
-                <input type="number" id="taskUserId" placeholder="Sorumlu Kullanıcı ID *" required>
-                <input type="number" id="taskCategoryId" placeholder="Kategori ID (Opsiyonel)">
-                <input type="text" id="taskStatus" placeholder="Durum (Pending/Completed)">
-                <textarea id="taskDescription" placeholder="Açıklama" rows="2"></textarea>
-                <button type="submit" id="taskSubmitBtn">Kaydet</button>
-                <button type="button" id="taskCancelBtn" class="hidden" onclick="resetTaskForm()">Vazgeç</button>
-            </form>
-            <h3>Görev Listesi</h3>
-            <div id="taskList"></div>
-        </div>
-
+    <div class="main-box">
+        <h2 id="taskFormTitle">Görev Ekle</h2>
+        <form id="taskForm">
+            <input type="text" id="taskTitle" placeholder="Görev Başlığı *" required>
+            <select id="taskUserId" required></select>
+            <select id="taskCategoryId" required></select>
+            <select id="taskStatus">
+                <option value="Pending">Pending</option>
+                <option value="Completed">Completed</option>
+            </select>
+            <textarea id="taskDescription" placeholder="Açıklama" rows="2"></textarea>
+            <button type="submit" id="taskSubmitBtn">Kaydet</button>
+            <button type="button" id="taskCancelBtn" class="hidden" onclick="resetTaskForm()">Vazgeç</button>
+        </form>
+        <h3>Görev Listesi</h3>
+        <div id="taskList"></div>
     </div>
 
     <script>
-        let editingUserId = null;
-        let editingCategoryId = null;
         let editingTaskId = null;
 
-        async function getAll() {
-            fetchUsers();
-            fetchCategories();
+        function getAuthHeaders() {
+            return {
+                'Content-Type': 'application/json',
+                'X-User-Id': localStorage.getItem('userId'),
+                'X-User-Role': localStorage.getItem('userRole')
+            };
+        }
+
+        function initPage() {
+            document.getElementById('topUsername').textContent = localStorage.getItem('username') + " - " + localStorage.getItem('userRole');
+            
+            if (localStorage.getItem('userRole') === 'Admin') {
+                document.getElementById('btnManageCategories').classList.remove('hidden');
+                document.getElementById('btnManageUsers').classList.remove('hidden');
+            }
+            populateDropdowns();
             fetchTasks();
         }
 
-        async function fetchUsers() {
-            const res = await fetch('/api/users');
-            const data = await res.json();
-            const container = document.getElementById('userList');
-            container.innerHTML = data.length === 0 ? '<p>Kayıt yok.</p>' : '';
-            data.forEach(x => {
-                container.innerHTML += `
-                    <div class="list-item">
-                        <div><strong>ID: #${x.id}</strong> - ${x.username} (${x.email || 'E-posta yok'})</div>
-                        <div class="item-actions">
-                            <button onclick="startEditUser(${x.id}, '${x.username}', '${x.email || ''}')">Düzelt</button>
-                            <button onclick="deleteUser(${x.id})">Sil</button>
-                        </div>
-                    </div>`;
+        function logout() {
+            localStorage.clear();
+            window.location.href = '/login.html';
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        async function populateDropdowns() {
+            const resUsers = await fetch('/api/users');
+            const users = await resUsers.json();
+            const userSelect = document.getElementById('taskUserId');
+            userSelect.innerHTML = '';
+            
+            if (localStorage.getItem('userRole') !== 'Admin') {
+                const option = document.createElement('option');
+                option.value = localStorage.getItem('userId');
+                option.textContent = localStorage.getItem('username');
+                userSelect.appendChild(option);
+                userSelect.disabled = true;
+            } else {
+                userSelect.disabled = false;
+                users.forEach(u => {
+                    const option = document.createElement('option');
+                    option.value = u.id;
+                    option.textContent = u.username;
+                    userSelect.appendChild(option);
+                });
+            }
+
+            const resCats = await fetch('/api/categories');
+            const cats = await resCats.json();
+            const catSelect = document.getElementById('taskCategoryId');
+            catSelect.innerHTML = '<option value="">-- Kategori Seçin --</option>';
+            cats.forEach(c => {
+                const option = document.createElement('option');
+                option.value = c.id;
+                option.textContent = c.name;
+                catSelect.appendChild(option);
             });
-        }
-
-        document.getElementById('userForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const username = document.getElementById('userUsername').value;
-            const email = document.getElementById('userEmail').value;
-
-            const payload = { username, email };
-            if (editingUserId) payload.id = editingUserId;
-
-            const opt = {
-                method: editingUserId ? 'PUT' : 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            };
-            const url = editingUserId ? `/api/users/${editingUserId}` : '/api/users';
-            const res = await fetch(url, opt);
-            if (res.ok) { resetUserForm(); fetchUsers(); fetchTasks(); }
-        });
-
-        function startEditUser(id, username, email) {
-            editingUserId = id;
-            document.getElementById('userFormTitle').textContent = "Kullanıcı Güncelle (ID: #" + id + ")";
-            document.getElementById('userUsername').value = username;
-            document.getElementById('userEmail').value = email;
-            document.getElementById('userCancelBtn').classList.remove('hidden');
-        }
-
-        function resetUserForm() {
-            editingUserId = null;
-            document.getElementById('userFormTitle').textContent = "Kullanıcı Ekle";
-            document.getElementById('userCancelBtn').classList.add('hidden');
-            document.getElementById('userForm').reset();
-        }
-
-        async function deleteUser(id) {
-            if (!confirm("Emin misiniz?")) return;
-            const res = await fetch(`/api/users/${id}`, { method: 'DELETE' });
-            if (res.ok) { fetchUsers(); fetchTasks(); }
-        }
-
-        async function fetchCategories() {
-            const res = await fetch('/api/categories');
-            const data = await res.json();
-            const container = document.getElementById('categoryList');
-            container.innerHTML = data.length === 0 ? '<p>Kayıt yok.</p>' : '';
-            data.forEach(x => {
-                container.innerHTML += `
-                    <div class="list-item">
-                        <div><strong>ID: #${x.id}</strong> - ${x.name} (${x.description || 'Açıklama yok'})</div>
-                        <div class="item-actions">
-                            <button onclick="startEditCategory(${x.id}, '${x.name}', '${x.description || ''}')">Düzelt</button>
-                            <button onclick="deleteCategory(${x.id})">Sil</button>
-                        </div>
-                    </div>`;
-            });
-        }
-
-        document.getElementById('categoryForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const name = document.getElementById('categoryName').value;
-            const description = document.getElementById('categoryDescription').value;
-
-            const payload = { name, description };
-            if (editingCategoryId) payload.id = editingCategoryId;
-
-            const opt = {
-                method: editingCategoryId ? 'PUT' : 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            };
-            const url = editingCategoryId ? `/api/categories/${editingCategoryId}` : '/api/categories';
-            const res = await fetch(url, opt);
-            if (res.ok) { resetCategoryForm(); fetchCategories(); fetchTasks(); }
-        });
-
-        function startEditCategory(id, name, description) {
-            editingCategoryId = id;
-            document.getElementById('categoryFormTitle').textContent = "Kategori Güncelle (ID: #" + id + ")";
-            document.getElementById('categoryName').value = name;
-            document.getElementById('categoryDescription').value = description;
-            document.getElementById('categoryCancelBtn').classList.remove('hidden');
-        }
-
-        function resetCategoryForm() {
-            editingCategoryId = null;
-            document.getElementById('categoryFormTitle').textContent = "Kategori Ekle";
-            document.getElementById('categoryCancelBtn').classList.add('hidden');
-            document.getElementById('categoryForm').reset();
-        }
-
-        async function deleteCategory(id) {
-            if (!confirm("Emin misiniz?")) return;
-            const res = await fetch(`/api/categories/${id}`, { method: 'DELETE' });
-            if (res.ok) { fetchCategories(); fetchTasks(); }
         }
 
         async function fetchTasks() {
-            const res = await fetch('/api/tasks');
+            const res = await fetch('/api/tasks', { headers: getAuthHeaders() });
             const data = await res.json();
             const container = document.getElementById('taskList');
             container.innerHTML = data.length === 0 ? '<p>Kayıt yok.</p>' : '';
             data.forEach(x => {
                 container.innerHTML += `
                     <div class="list-item">
-                        <div><strong>ID: #${x.id} - ${x.title}</strong> [${x.status}]</div>
-                        <div>${x.description || ''}</div>
+                        <div><strong>ID: #${x.id} - ${escapeHtml(x.title)}</strong> [${escapeHtml(x.status)}]</div>
+                        <div>${escapeHtml(x.description)}</div>
                         <div style="font-size: 11px; color: #555555; margin-top: 3px;">
-                            Sorumlu: ${x.userName || 'Yok'} (ID: ${x.userId}) | 
-                            Kategori: ${x.categoryName || 'Yok'} (ID: ${x.categoryId || 'Yok'})
+                            Sorumlu: ${escapeHtml(x.userName)} (ID: ${x.userId}) | 
+                            Kategori: ${escapeHtml(x.categoryName) || 'Yok'} (ID: ${x.categoryId || 'Yok'})
                         </div>
                         <div class="item-actions">
-                            <button onclick="startEditTask(${x.id}, '${x.title}', ${x.userId}, '${x.categoryId || ''}', '${x.status}', '${x.description || ''}')">Düzelt</button>
+                            <button onclick="startEditTask(${x.id}, '${escapeHtml(x.title)}', ${x.userId}, '${x.categoryId || ''}', '${escapeHtml(x.status)}', '${escapeHtml(x.description)}')">Düzelt</button>
                             <button onclick="deleteTask(${x.id})">Sil</button>
                         </div>
                     </div>`;
@@ -270,20 +147,18 @@
             const title = document.getElementById('taskTitle').value;
             const userId = parseInt(document.getElementById('taskUserId').value);
             const categoryId = document.getElementById('taskCategoryId').value ? parseInt(document.getElementById('taskCategoryId').value) : null;
-            const status = document.getElementById('taskStatus').value || 'Pending';
+            const status = document.getElementById('taskStatus').value;
             const description = document.getElementById('taskDescription').value;
-
+            
             const payload = { title, userId, categoryId, status, description };
             if (editingTaskId) payload.id = editingTaskId;
 
-            const opt = {
+            const res = await fetch(editingTaskId ? `/api/tasks/${editingTaskId}` : '/api/tasks', {
                 method: editingTaskId ? 'PUT' : 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: getAuthHeaders(),
                 body: JSON.stringify(payload)
-            };
-            const url = editingTaskId ? `/api/tasks/${editingTaskId}` : '/api/tasks';
-            const res = await fetch(url, opt);
-            if (res.ok) { resetTaskForm(); fetchTasks(); }
+            });
+            if(res.ok) { resetTaskForm(); fetchTasks(); }
         });
 
         function startEditTask(id, title, userId, categoryId, status, description) {
@@ -302,16 +177,16 @@
             document.getElementById('taskFormTitle').textContent = "Görev Ekle";
             document.getElementById('taskCancelBtn').classList.add('hidden');
             document.getElementById('taskForm').reset();
+            populateDropdowns();
         }
 
         async function deleteTask(id) {
-            if (!confirm("Emin misiniz?")) return;
-            const res = await fetch(`/api/tasks/${id}`, { method: 'DELETE' });
-            if (res.ok) fetchTasks();
+            if(!confirm("Emin misiniz?")) return;
+            const res = await fetch(`/api/tasks/${id}`, {method: 'DELETE', headers: getAuthHeaders()});
+            if(res.ok) fetchTasks();
         }
 
-        getAll();
+        initPage();
     </script>
 </body>
-
 </html>

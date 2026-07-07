@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giriş Yap</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; background-color: #ffffff; color: #000000; }
+        .auth-box { max-w: 400px; margin: 100px auto; border: 1px solid #000000; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+        form { display: flex; flex-direction: column; gap: 8px; }
+        input { padding: 6px; border: 1px solid #000000; font-size: 14px; }
+        button { padding: 6px; border: 1px solid #000000; background: #ffffff; cursor: pointer; font-size: 13px; }
+        button:hover { background: #eeeeee; }
+        .link-btn { text-align: center; margin-top: 10px; background: none; border: none; text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+    <div class="auth-box">
+        <h2>Giriş Yap</h2>
+        <form id="loginForm">
+            <input type="text" id="loginUsername" placeholder="Kullanıcı Adı *" required>
+            <input type="password" id="loginPassword" placeholder="Şifre *" required>
+            <button type="submit">Giriş Yap</button>
+        </form>
+        <button class="link-btn" onclick="window.location.href='/register.html'">Hesap Oluştur (Kayıt Ol)</button>
+    </div>
+
+    <script>
+        if (localStorage.getItem('userId')) {
+            window.location.href = '/index.html';
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ username, password })
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                localStorage.setItem('userId', data.id);
+                localStorage.setItem('username', data.username);
+                localStorage.setItem('userRole', data.role);
+                window.location.href = '/index.html';
+            } else {
+                alert("Giriş başarısız. Kullanıcı adı veya şifre hatalı.");
+            }
+        });
+    </script>
+</body>
+</html>

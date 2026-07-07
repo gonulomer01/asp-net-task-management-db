@@ -19,6 +19,8 @@ namespace TaskManagementAPI.Data
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Id).HasColumnName("id");
                 entity.Property(e => e.Username).HasColumnName("username").IsRequired().HasMaxLength(50);
+                entity.Property(e => e.Password).HasColumnName("password").IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Role).HasColumnName("role").IsRequired().HasMaxLength(20);
                 entity.Property(e => e.Email).HasColumnName("email").HasMaxLength(100);
                 entity.Property(e => e.CreatedAt).HasColumnName("created_at");
             });

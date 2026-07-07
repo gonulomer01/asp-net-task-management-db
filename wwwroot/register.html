@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kayıt Ol</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; background-color: #ffffff; color: #000000; }
+        .auth-box { max-w: 400px; margin: 100px auto; border: 1px solid #000000; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+        form { display: flex; flex-direction: column; gap: 8px; }
+        input { padding: 6px; border: 1px solid #000000; font-size: 14px; }
+        button { padding: 6px; border: 1px solid #000000; background: #ffffff; cursor: pointer; font-size: 13px; }
+        button:hover { background: #eeeeee; }
+        .link-btn { text-align: center; margin-top: 10px; background: none; border: none; text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+    <div class="auth-box">
+        <h2>Yeni Hesap Oluştur</h2>
+        <form id="registerForm">
+            <input type="text" id="regUsername" placeholder="Kullanıcı Adı *" required>
+            <input type="password" id="regPassword" placeholder="Şifre *" required>
+            <input type="email" id="regEmail" placeholder="E-posta (Opsiyonel)">
+            <button type="submit">Kayıt Ol</button>
+        </form>
+        <button class="link-btn" onclick="window.location.href='/login.html'">Zaten hesabım var, Giriş Yap</button>
+    </div>
+
+    <script>
+        if (localStorage.getItem('userId')) {
+            window.location.href = '/index.html';
+        }
+
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('regUsername').value;
+            const password = document.getElementById('regPassword').value;
+            const email = document.getElementById('regEmail').value;
+            const role = "User";
+
+            const res = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ username, password, email, role })
+            });
+
+            if (res.ok) {
+                alert("Kayıt başarılı! Giriş ekranına yönlendiriliyorsunuz.");
+                window.location.href = '/login.html';
+            } else {
+                const data = await res.json();
+                alert("Hata: " + (data.error || "Kayıt başarısız."));
+            }
+        });
+    </script>
+</body>
+</html>
