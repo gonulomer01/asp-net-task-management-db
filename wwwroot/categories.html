@@ -14,41 +14,51 @@
     </script>
     <style>
         :root {
-            --bg-body: #f8fafc;
-            --bg-card: #ffffff;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
-            --input-border: #cbd5e1;
-            --item-bg: #f8fafc;
+            --bg-base: #ffffff;
+            --bg-side: #fafafa;
+            --text-title: #388ff9;
+            --text-main: #262626;
+            --text-muted: #8e8e8e;
+            --border: #dbdbdb;
+            --input-bg: #ffffff;
+            --btn-bg: #111111;
+            --btn-text: #ffffff;
+            --item-bg: #f5f5f5;
         }
         html.dark {
-            --bg-body: #0f172a;
-            --bg-card: #1e293b;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --border: #334155;
-            --input-border: #475569;
-            --item-bg: #0f172a;
+            --bg-window: #000000;
+            --bg-base: #0b0f19;
+            --bg-side: #111827;
+            --text-heading: #ffffff;
+            --text-title: #388ff9;
+            --text-main: #f3f4f6;
+            --text-sub: #888888;
+            --border: #1f2937;
+            --input-fill: #030712;
+            --input-bg: #070a12;
+            --btn-bg: #ffffff;
+            --btn-text: #000000;
+            --item-bg: #111827;
         }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg-body); color: var(--text-main); margin: 0; padding: 24px; transition: background 0.2s, color 0.2s; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg-base); color: var(--text-main); margin: 0; padding: 24px; transition: background-color 0.3s, color 0.3s; }
         .main-container { display: flex; gap: 24px; flex-wrap: wrap; margin-top: 20px; align-items: flex-start; }
-        .form-box { width: 360px; background: var(--bg-card); border-radius: 12px; padding: 20px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .list-box { flex: 1; min-width: 400px; background: var(--bg-card); border-radius: 12px; padding: 20px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        h2, h3 { margin-top: 0; color: var(--text-main); font-size: 16px; margin-bottom: 16px; }
-        form { display: flex; flex-direction: column; gap: 12px; }
-        input { padding: 8px 12px; border: 1px solid var(--input-border); border-radius: 6px; font-size: 14px; background: var(--bg-card); color: var(--text-main); }
-        input:focus { border-color: #7c3aed; outline: none; }
-        button { padding: 8px 14px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg-card); color: var(--text-main); cursor: pointer; font-size: 13px; font-weight: 500; transition: all 0.2s; }
-        button:hover { background: var(--item-bg); }
-        .purple-btn { background: #7c3aed; color: #ffffff; border: none; font-weight: 600; }
-        .purple-btn:hover { background: #6d28d9; }
-        .danger-btn { color: #ef4444; border-color: #fca5a5; background: var(--bg-card); }
+        .form-box { width: 360px; background: var(--bg-side); border-radius: 16px; padding: 24px; border: 1px solid var(--border); box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
+        .list-box { flex: 1; min-width: 400px; background: var(--bg-side); border-radius: 16px; padding: 24px; border: 1px solid var(--border); box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
+        h2, h3 { margin-top: 0; color: var(--text-main); font-size: 16px; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
+        form { display: flex; flex-direction: column; gap: 16px; }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group label { font-size: 12px; font-weight: 600; color: var(--text-main); }
+        input { padding: 10px 16px; border: 1px solid var(--border); border-radius: 20px; font-size: 14px; background: var(--input-bg); color: var(--text-main); }
+        input:focus { border-color: var(--text-main); outline: none; }
+        button { padding: 8px 18px; border: 1px solid var(--border); border-radius: 20px; background: var(--bg-base); color: var(--text-main); cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s; }
+        button:hover { opacity: 0.8; }
+        .purple-btn { background: var(--btn-bg); color: var(--btn-text); border: none; padding: 12px; font-size: 14px; font-weight: 700; }
+        .danger-btn { color: #ef4444; border-color: #ef4444; background: var(--bg-base); }
         .danger-btn:hover { background: #fef2f2; }
         html.dark .danger-btn:hover { background: #451a1a; }
-        .list-item { padding: 14px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; background: var(--item-bg); display: flex; justify-content: space-between; align-items: center; }
-        .item-title { font-weight: 600; font-size: 14px; color: var(--text-main); }
-        .item-desc { color: var(--text-muted); font-size: 13px; margin-top: 2px; }
+        .list-item { padding: 16px; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; background: var(--bg-base); display: flex; justify-content: space-between; align-items: center; }
+        .item-title { font-weight: 700; font-size: 14px; color: var(--text-main); }
+        .item-desc { color: var(--text-muted); font-size: 13px; margin-top: 4px; }
         .item-actions { display: flex; gap: 6px; }
         .hidden { display: none; }
     </style>
@@ -64,8 +74,14 @@
         <div class="form-box">
             <h2 id="categoryFormTitle">Kategori Ekle</h2>
             <form id="categoryForm">
-                <input type="text" id="categoryName" placeholder="Kategori Adı *" required>
-                <input type="text" id="categoryDescription" placeholder="Açıklama">
+                <div class="form-group">
+                    <label>Kategori Adı</label>
+                    <input type="text" id="categoryName" required>
+                </div>
+                <div class="form-group">
+                    <label>Açıklama</label>
+                    <input type="text" id="categoryDescription">
+                </div>
                 <button type="submit" id="categorySubmitBtn" class="purple-btn">Kaydet</button>
                 <button type="button" id="categoryCancelBtn" class="hidden" onclick="resetCategoryForm()">Vazgeç</button>
             </form>

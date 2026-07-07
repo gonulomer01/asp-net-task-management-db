@@ -14,50 +14,59 @@
     </script>
     <style>
         :root {
-            --bg-body: #f8fafc;
-            --bg-card: #ffffff;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
-            --input-border: #cbd5e1;
-            --item-bg: #f8fafc;
+            --bg-base: #ffffff;
+            --bg-side: #fafafa;
+            --text-title: #388ff9;
+            --text-main: #262626;
+            --text-muted: #8e8e8e;
+            --border: #dbdbdb;
+            --input-bg: #ffffff;
+            --btn-bg: #111111;
+            --btn-text: #ffffff;
+            --badge-p-bg: #fef3c7;
+            --badge-p-text: #d97706;
+            --badge-c-bg: #dcfce7;
+            --badge-c-text: #15803d;
         }
         html.dark {
-            --bg-body: #0f172a;
-            --bg-card: #1e293b;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --border: #334155;
-            --input-border: #475569;
-            --item-bg: #0f172a;
+            --bg-base: #0b0f19;
+            --bg-side: #111827;
+            --text-title: #388ff9;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border: #1f2937;
+            --input-bg: #070a12;
+            --btn-bg: #ffffff;
+            --btn-text: #000000;
+            --badge-p-bg: #78350f;
+            --badge-p-text: #fde68a;
+            --badge-c-bg: #064e3b;
+            --badge-c-text: #a7f3d0;
         }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg-body); color: var(--text-main); margin: 0; padding: 24px; transition: background 0.2s, color 0.2s; }
-        .header-area { display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 16px 24px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid var(--border); margin-bottom: 24px; }
-        h1 { margin: 0; font-size: 20px; color: var(--text-main); }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 24px; background-color: var(--bg-base); color: var(--text-main); transition: background-color 0.3s, color 0.3s; }
+        .header-area { display: flex; justify-content: space-between; align-items: center; background: var(--bg-side); padding: 16px 24px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 24px; }
+        h1 { margin: 0; font-size: 22px; font-weight: 700; }
         .nav-bar { display: flex; gap: 12px; margin-bottom: 24px; }
         .main-container { display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; }
-        .form-box { width: 360px; background: var(--bg-card); border-radius: 12px; padding: 20px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .list-box { flex: 1; min-width: 400px; background: var(--bg-card); border-radius: 12px; padding: 20px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        h2, h3 { margin-top: 0; color: var(--text-main); font-size: 16px; margin-bottom: 16px; }
-        form { display: flex; flex-direction: column; gap: 12px; }
-        input, textarea, select { padding: 8px 12px; border: 1px solid var(--input-border); border-radius: 6px; font-size: 14px; background: var(--bg-card); color: var(--text-main); }
-        input:focus, textarea:focus, select:focus { border-color: #4f46e5; outline: none; }
-        button { padding: 8px 14px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg-card); color: var(--text-main); cursor: pointer; font-size: 13px; font-weight: 500; transition: all 0.2s; }
-        button:hover { background: var(--item-bg); }
-        .primary-btn { background: #4f46e5; color: #ffffff; border: none; font-weight: 600; }
-        .primary-btn:hover { background: #4338ca; }
-        .danger-btn { color: #ef4444; border-color: #fca5a5; background: var(--bg-card); }
-        .danger-btn:hover { background: #fef2f2; }
-        html.dark .danger-btn:hover { background: #451a1a; }
-        .list-item { padding: 16px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; background: var(--item-bg); }
-        .item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-        .item-title { font-weight: 600; font-size: 15px; color: var(--text-main); }
-        .badge { font-size: 11px; padding: 3px 8px; border-radius: 12px; font-weight: 600; }
-        .badge-pending { background: #fef3c7; color: #d97706; }
-        .badge-completed { background: #dcfce7; color: #15803d; }
-        html.dark .badge-pending { background: #78350f; color: #fde68a; }
-        html.dark .badge-completed { background: #064e3b; color: #a7f3d0; }
-        .item-desc { color: var(--text-muted); font-size: 13px; margin-bottom: 10px; }
+        .form-box { width: 360px; background: var(--bg-side); border-radius: 16px; padding: 24px; border: 1px solid var(--border); box-sizing: border-box; }
+        .list-box { flex: 1; min-width: 400px; background: var(--bg-side); border-radius: 16px; padding: 24px; border: 1px solid var(--border); box-sizing: border-box; }
+        h2, h3 { margin-top: 0; color: var(--text-main); font-size: 16px; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
+        form { display: flex; flex-direction: column; gap: 16px; }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group label { font-size: 12px; font-weight: 600; color: var(--text-main); }
+        input, select, textarea { padding: 10px 16px; border: 1px solid var(--border); border-radius: 20px; font-size: 14px; background: var(--input-bg); color: var(--text-main); box-sizing: border-box; width: 100%; }
+        input:focus, select:focus, textarea:focus { border-color: var(--text-main); outline: none; }
+        button { padding: 8px 18px; border: 1px solid var(--border); border-radius: 20px; background: var(--bg-base); color: var(--text-main); cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s; }
+        button:hover { opacity: 0.8; }
+        .primary-btn { background: var(--btn-bg); color: var(--btn-text); border: none; padding: 12px; font-size: 14px; font-weight: 700; }
+        .danger-btn { color: #ef4444; border-color: #ef4444; }
+        .list-item { padding: 16px; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; background: var(--bg-base); }
+        .item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .item-title { font-weight: 700; font-size: 15px; }
+        .badge { font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 700; text-transform: uppercase; }
+        .badge-pending { background: var(--badge-p-bg); color: var(--badge-p-text); }
+        .badge-completed { background: var(--badge-c-bg); color: var(--badge-c-text); }
+        .item-desc { color: var(--text-muted); font-size: 13px; margin-bottom: 12px; }
         .item-meta { font-size: 11px; color: var(--text-muted); border-top: 1px dashed var(--border); padding-top: 8px; display: flex; gap: 16px; }
         .item-actions { display: flex; gap: 8px; margin-top: 12px; }
         .hidden { display: none; }
@@ -66,7 +75,7 @@
 <body>
 
     <div class="header-area">
-        <h1>Yönetim Paneli (<span id="topUsername"></span>)</h1>
+        <h1>Dashboard (<span id="topUsername"></span>)</h1>
         <div>
             <button onclick="toggleTheme()" style="margin-right: 8px;">Tema Değiştir</button>
             <button class="danger-btn" onclick="logout()">Çıkış Yap</button>
@@ -83,21 +92,36 @@
         <div class="form-box">
             <h2 id="taskFormTitle">Yeni Görev Tanımla</h2>
             <form id="taskForm">
-                <input type="text" id="taskTitle" placeholder="Görev Başlığı *" required>
-                <select id="taskUserId" required></select>
-                <select id="taskCategoryId" required></select>
-                <select id="taskStatus">
-                    <option value="Pending">Pending</option>
-                    <option value="Completed">Completed</option>
-                </select>
-                <textarea id="taskDescription" placeholder="Görev detayları..." rows="3"></textarea>
+                <div class="form-group">
+                    <label>Görev Başlığı</label>
+                    <input type="text" id="taskTitle" required>
+                </div>
+                <div class="form-group">
+                    <label>Sorumlu Kullanıcı</label>
+                    <select id="taskUserId" required></select>
+                </div>
+                <div class="form-group">
+                    <label>Kategori</label>
+                    <select id="taskCategoryId" required></select>
+                </div>
+                <div class="form-group">
+                    <label>Durum</label>
+                    <select id="taskStatus">
+                        <option value="Pending">Pending</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Açıklama</label>
+                    <textarea id="taskDescription" rows="3"></textarea>
+                </div>
                 <button type="submit" id="taskSubmitBtn" class="primary-btn">Görevi Kaydet</button>
                 <button type="button" id="taskCancelBtn" class="hidden" onclick="resetTaskForm()">Vazgeç</button>
             </form>
         </div>
 
         <div class="list-box">
-            <h3>MevcutGörevler</h3>
+            <h3>Görev Havuzu</h3>
             <div id="taskList"></div>
         </div>
     </div>
