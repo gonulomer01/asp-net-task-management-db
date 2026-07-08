@@ -40,7 +40,21 @@ const dict = {
         task_category: "Kategori",
         task_timeline: "Süreç",
         task_score: "Değerlendirme",
-        task_note: "Personel Notu"
+        task_note: "Personel Notu",
+        profile_header: "KİŞİSEL PROFİL AYARLARI",
+        profile_form_title: "BİLGİLERİMİ GÜNCELLE",
+        users_header: "SİSTEM PERSONEL KONTROLÜ",
+        users_form_title: "PERSONEL KAYDI / GÜNCELLEME",
+        users_list_title: "AKTİF PERSONEL LİSTESİ",
+        categories_header: "KATEGORİ KONTROL PANELİ",
+        categories_form_title: "YENİ KATEGORİ EKLE",
+        categories_list_title: "MEVCUT KATEGORİLER",
+        cat_name_label: "KATEGORİ ADI *",
+        cat_desc_label: "AÇIKLAMA / DETAY",
+        text_mail: "Mail",
+        text_dept: "Dept",
+        text_role: "Rol",
+        text_none: "Yok"
     },
     en: {
         site_title: "TASK MANAGEMENT SYSTEM",
@@ -83,7 +97,21 @@ const dict = {
         task_category: "Category",
         task_timeline: "Timeline",
         task_score: "Evaluation",
-        task_note: "Staff Note"
+        task_note: "Staff Note",
+        profile_header: "PERSONAL PROFILE SETTINGS",
+        profile_form_title: "UPDATE MY INFORMATION",
+        users_header: "SYSTEM PERSONNEL CONTROL",
+        users_form_title: "PERSONNEL REGISTRATION / UPDATE",
+        users_list_title: "ACTIVE PERSONNEL LIST",
+        categories_header: "CATEGORY CONTROL PANEL",
+        categories_form_title: "ADD NEW CATEGORY",
+        categories_list_title: "CURRENT CATEGORIES",
+        cat_name_label: "CATEGORY NAME *",
+        cat_desc_label: "DESCRIPTION / DETAIL",
+        text_mail: "Mail",
+        text_dept: "Dept",
+        text_role: "Role",
+        text_none: "None"
     }
 };
 

@@ -13,7 +13,7 @@
     <div class="system-view-header">
         <div class="system-header-title-group">
             <div class="corner-branding" data-key="site_title"></div>
-            <h1 data-key="btn_cats"></h1>
+            <h1 data-key="categories_header"></h1>
         </div>
         <div id="headerRightActions" class="header-right-actions"></div>
     </div>
@@ -21,21 +21,21 @@
     <div class="workspace-wrapper">
         <div class="layout-grid">
             <div class="panel-card-form">
-                <h2>Yeni Kategori Ekle</h2>
+                <h2 data-key="categories_form_title"></h2>
                 <form id="categoryForm">
                     <div class="field-block">
-                        <label>Kategori Adı *</label>
+                        <label data-key="cat_name_label"></label>
                         <input type="text" id="categoryName" required>
                     </div>
                     <div class="field-block">
-                        <label>Açıklama / Detay</label>
+                        <label data-key="cat_desc_label"></label>
                         <input type="text" id="categoryDescription">
                     </div>
                     <button type="submit" class="submit-core-btn" data-key="save"></button>
                 </form>
             </div>
             <div class="panel-card-list">
-                <h3>Mevcut Kategoriler</h3>
+                <h3 data-key="categories_list_title"></h3>
                 <div id="categoryList"></div>
             </div>
         </div>
@@ -56,7 +56,7 @@
                             <div class="data-row-card-title">${escapeHtml(x.name)}</div>
                         </div>
                         <div class="data-row-card-desc">
-                            ${escapeHtml(x.description || '')}
+                            ${escapeHtml(x.description || lang('text_none'))}
                         </div>
                         <div class="data-row-card-actions">
                             <button onclick="startEditCategory(${x.id}, '${escapeHtml(x.name)}', '${escapeHtml(x.description || '')}')">${lang('action_edit')}</button>

@@ -1,7 +1,7 @@
 :root {
     --bg-window: #ffffff;
     --bg-panel: #f8fafc;
-    --bg-side: #113f7c;
+    --bg-side: #134b94;
     --text-heading: #0f172a;
     --text-sub: #475569;
     --border-line: #334155;
@@ -23,7 +23,7 @@ html.dark {
     color-scheme: dark;
     --bg-window: #020617;
     --bg-panel: #0b1120;
-    --bg-side: #070b14;
+    --bg-side: #061c4f;
     --text-heading: #f8fafc;
     --text-sub: #94a3b8;
     --border-line: #475569;

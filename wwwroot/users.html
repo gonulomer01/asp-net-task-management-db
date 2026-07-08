@@ -13,7 +13,7 @@
     <div class="system-view-header">
         <div class="system-header-title-group">
             <div class="corner-branding" data-key="site_title"></div>
-            <h1>SİSTEM PERSONEL KONTROLÜ</h1>
+            <h1 data-key="users_header"></h1>
         </div>
         <div id="headerRightActions" class="header-right-actions"></div>
     </div>
@@ -21,7 +21,7 @@
     <div class="workspace-wrapper">
         <div class="layout-grid">
             <div class="panel-card-form">
-                <h2>Personel Kaydı / Güncelleme</h2>
+                <h2 data-key="users_form_title"></h2>
                 <form id="userForm">
                     <div class="field-block">
                         <label data-key="username"></label>
@@ -55,7 +55,7 @@
                 </form>
             </div>
             <div class="panel-card-list">
-                <h3>Aktif Personel Listesi</h3>
+                <h3 data-key="users_list_title"></h3>
                 <div id="userList"></div>
             </div>
         </div>
@@ -76,7 +76,7 @@
                             <div class="data-row-card-title">${escapeHtml(x.username)}</div>
                         </div>
                         <div class="data-row-card-desc">
-                            Mail: ${escapeHtml(x.email || 'Yok')} | Dept: ${escapeHtml(x.department)} | Rol: ${escapeHtml(x.role)}
+                            ${lang('text_mail')}: ${escapeHtml(x.email || lang('text_none'))} | ${lang('text_dept')}: ${escapeHtml(x.department)} | ${lang('text_role')}: ${escapeHtml(x.role)}
                         </div>
                         <div class="data-row-card-actions">
                             <button onclick="startEditUser(${x.id}, '${escapeHtml(x.username)}', '${escapeHtml(x.password)}', '${escapeHtml(x.email || '')}', '${escapeHtml(x.role)}', '${escapeHtml(x.department)}')">${lang('action_edit')}</button>
