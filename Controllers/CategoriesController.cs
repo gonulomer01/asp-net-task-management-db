@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TaskManagementAPI.Data;
 using TaskManagementAPI.Models;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace TaskManagementAPI.Controllers
 {
@@ -18,15 +19,15 @@ namespace TaskManagementAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetCategories()
+        public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
         {
-            var categories = await _context.Categories.ToListAsync();
-            return Ok(categories);
+            return await _context.Categories.ToListAsync();
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateCategory(Category category)
+        public async Task<ActionResult<Category>> CreateCategory(Category category)
         {
+            if (!Request.Headers.TryGetValue("X-User-Role", out var userRole) || userRole != "Admin") return Forbid();
             _context.Categories.Add(category);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetCategories), new { id = category.Id }, category);
@@ -35,6 +36,7 @@ namespace TaskManagementAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateCategory(int id, Category category)
         {
+            if (!Request.Headers.TryGetValue("X-User-Role", out var userRole) || userRole != "Admin") return Forbid();
             if (id != category.Id) return BadRequest();
             _context.Entry(category).State = EntityState.Modified;
             await _context.SaveChangesAsync();
@@ -44,8 +46,17 @@ namespace TaskManagementAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(int id)
         {
+            if (!Request.Headers.TryGetValue("X-User-Role", out var userRole) || userRole != "Admin") return Forbid();
+            
+            bool hasTasks = await _context.Tasks.AnyAsync(t => t.CategoryId == id);
+            if (hasTasks)
+            {
+                return BadRequest(new { error = "CATEGORY_IN_USE" });
+            }
+
             var category = await _context.Categories.FindAsync(id);
             if (category == null) return NotFound();
+
             _context.Categories.Remove(category);
             await _context.SaveChangesAsync();
             return NoContent();

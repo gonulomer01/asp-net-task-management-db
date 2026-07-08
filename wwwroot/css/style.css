@@ -1,15 +1,15 @@
 :root {
-    --bg-window: #ffffff;
-    --bg-panel: #f8fafc;
-    --bg-side: #134b94;
+    --bg-window: #eef2f6;
+    --bg-panel: #ffffff;
+    --bg-side: #113f7c;
     --text-heading: #0f172a;
     --text-sub: #475569;
-    --border-line: #334155;
+    --border-line: #cbd5e1;
     --input-fill: #ffffff;
     --btn-default-bg: #ffffff;
-    --btn-default-text: #0f172a;
-    --btn-default-border: #334155;
-    --btn-prime-bg: #0f172a;
+    --btn-default-text: #113f7c;
+    --btn-default-border: #cbd5e1;
+    --btn-prime-bg: #113f7c;
     --btn-prime-text: #ffffff;
     --item-row-bg: #ffffff;
     --badge-p-bg: #fef3c7;
@@ -21,19 +21,19 @@
 }
 html.dark {
     color-scheme: dark;
-    --bg-window: #020617;
-    --bg-panel: #0b1120;
-    --bg-side: #061c4f;
+    --bg-window: #090e1a;
+    --bg-panel: #121e36;
+    --bg-side: #050a12;
     --text-heading: #f8fafc;
     --text-sub: #94a3b8;
-    --border-line: #475569;
-    --input-fill: #070a12;
-    --btn-default-bg: #000000;
-    --btn-default-text: #ffffff;
-    --btn-default-border: #475569;
-    --btn-prime-bg: #ffffff;
-    --btn-prime-text: #000000;
-    --item-row-bg: #070a12;
+    --border-line: #1e293b;
+    --input-fill: #1e293b;
+    --btn-default-bg: #090e1a;
+    --btn-default-text: #f8fafc;
+    --btn-default-border: #334155;
+    --btn-prime-bg: #f8fafc;
+    --btn-prime-text: #090e1a;
+    --item-row-bg: #121e36;
     --badge-p-bg: #78350f;
     --badge-p-text: #fde68a;
     --badge-c-bg: #064e3b;
@@ -44,8 +44,8 @@ html.dark {
 body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; background-color: var(--bg-window); color: var(--text-heading); min-height: 100vh; transition: background-color 0.3s, color 0.3s; }
 .global-toolbar { position: absolute; top: 20px; right: 24px; z-index: 100; display: flex; gap: 8px; }
 .header-right-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-.toolbar-btn { background: var(--btn-default-bg); color: var(--btn-default-text); border: 2px solid var(--btn-default-border); padding: 8px 16px; border-radius: 24px; cursor: pointer; font-size: 12px; font-weight: 800; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: all 0.2s; }
-.toolbar-btn:hover { background: var(--btn-prime-bg); color: var(--btn-prime-text); border-color: var(--border-line); }
+.toolbar-btn { background: var(--btn-default-bg); color: var(--btn-default-text); border: 2px solid var(--btn-default-border); padding: 8px 16px; border-radius: 24px; cursor: pointer; font-size: 12px; font-weight: 800; box-shadow: 0 2px 4px rgba(0,0,0,0.04); transition: all 0.2s; }
+.toolbar-btn:hover { background: var(--btn-prime-bg); color: var(--btn-prime-text); border-color: var(--text-heading); }
 .split-layout { display: flex; min-height: 100vh; }
 .brand-side { flex: 1.2; background-color: var(--bg-side); display: flex; align-items: center; justify-content: center; padding: 40px; box-sizing: border-box; transition: background-color 0.3s; }
 .brand-logo { max-width: 90%; max-height: 80vh; object-fit: contain; display: block; }
@@ -53,30 +53,30 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helve
 .form-container { width: 100%; max-width: 400px; }
 .site-context-title { font-size: 24px; font-weight: 800; margin-bottom: 24px; text-align: center; color: var(--text-heading); text-transform: uppercase; letter-spacing: 0.5px; }
 .corner-branding { font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--text-heading); }
-.system-view-header { display: flex; justify-content: space-between; align-items: center; background: var(--bg-panel); padding: 20px 24px; border-radius: 12px; border: 2px solid var(--border-line); margin: 24px 24px 0 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+.system-view-header { display: flex; justify-content: space-between; align-items: center; background: var(--bg-panel); padding: 20px 24px; border-radius: 12px; border: 2px solid var(--border-line); margin: 24px 24px 0 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
 .system-header-title-group { display: flex; flex-direction: column; gap: 6px; }
 .system-view-header h1 { margin: 0; font-size: 18px; font-weight: 800; color: var(--text-heading); }
 .workspace-wrapper { padding: 24px; }
 .nav-bar { display: flex; gap: 10px; margin-bottom: 24px; }
 .nav-link-btn { background: var(--btn-default-bg); color: var(--btn-default-text); border: 2px solid var(--btn-default-border); padding: 10px 18px; border-radius: 24px; cursor: pointer; font-size: 13px; font-weight: 700; text-decoration: none; box-shadow: 0 2px 4px rgba(0,0,0,0.02); transition: all 0.2s; }
-.nav-link-btn:hover { border-color: var(--border-line); background: var(--btn-prime-bg); color: var(--btn-prime-text); }
+.nav-link-btn:hover { border-color: var(--text-heading); background: var(--btn-prime-bg); color: var(--btn-prime-text); }
 .layout-grid { display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; }
-.panel-card-form { width: 360px; background: var(--bg-panel); border-radius: 12px; padding: 24px; border: 2px solid var(--border-line); box-shadow: 0 4px 6px rgba(0,0,0,0.02); box-sizing: border-box; }
-.panel-card-list { flex: 1; min-width: 400px; background: var(--bg-panel); border-radius: 12px; padding: 24px; border: 2px solid var(--border-line); box-shadow: 0 4px 6px rgba(0,0,0,0.02); box-sizing: border-box; }
+.panel-card-form { width: 360px; background: var(--bg-panel); border-radius: 12px; padding: 24px; border: 2px solid var(--border-line); box-shadow: 0 4px 12px rgba(0,0,0,0.03); box-sizing: border-box; }
+.panel-card-list { flex: 1; min-width: 400px; background: var(--bg-panel); border-radius: 12px; padding: 24px; border: 2px solid var(--border-line); box-shadow: 0 4px 12px rgba(0,0,0,0.03); box-sizing: border-box; }
 .panel-card-form h2, .panel-card-list h3 { margin-top: 0; font-size: 14px; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid var(--border-line); padding-bottom: 10px; color: var(--text-heading); font-weight: 800; }
 form { display: flex; flex-direction: column; gap: 16px; }
 .field-block { display: flex; flex-direction: column; gap: 6px; }
 .field-block label { font-size: 12px; font-weight: 800; color: var(--text-heading); text-transform: uppercase; }
 input, select, textarea { padding: 11px 20px; border: 2px solid var(--border-line); border-radius: 24px; font-size: 14px; background: var(--input-fill); color: var(--text-heading); font-weight: 600; box-sizing: border-box; width: 100%; }
-input:focus, select:focus, textarea:focus { border-color: var(--border-line); outline: none; }
+input:focus, select:focus, textarea:focus { border-color: var(--text-heading); outline: none; }
 input[type="datetime-local"] { color: var(--text-heading); background-color: var(--input-fill); border: 2px solid var(--border-line); border-radius: 24px; padding: 11px 20px; }
-button, .action-element-btn { padding: 8px 16px; border: 2px solid var(--border-line); border-radius: 24px; background: var(--btn-default-bg); color: var(--btn-default-text); cursor: pointer; font-size: 13px; font-weight: 800; box-shadow: 0 2px 4px rgba(0,0,0,0.04); transition: all 0.2s; }
-button:hover, .action-element-btn:hover { border-color: var(--border-line); background: var(--btn-prime-bg); color: var(--btn-prime-text); }
+button, .action-element-btn { padding: 8px 16px; border: 2px solid var(--border-line); border-radius: 24px; background: var(--btn-default-bg); color: var(--btn-default-text); cursor: pointer; font-size: 13px; font-weight: 800; box-shadow: 0 2px 4px rgba(0,0,0,0.04); transition: all 0.2s; text-decoration: none; display: inline-block; }
+button:hover, .action-element-btn:hover { border-color: var(--text-heading); background: var(--btn-prime-bg); color: var(--btn-prime-text); }
 .submit-core-btn { background: var(--btn-prime-bg); color: var(--btn-prime-text); border: 2px solid var(--border-line); font-size: 14px; font-weight: 800; padding: 12px; border-radius: 24px; cursor: pointer; width: 100%; text-transform: uppercase; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
 .submit-core-btn:hover { opacity: 0.9; }
 .abort-btn { color: #ef4444; border-color: #ef4444; background: var(--bg-window); border-radius: 24px; }
 .abort-btn:hover { background: #ef4444; color: #ffffff; border-color: var(--border-line); }
-.data-row-card { padding: 18px; border: 2px solid var(--border-line); border-radius: 12px; margin-bottom: 12px; background: var(--item-row-bg); box-shadow: 0 2px 4px rgba(0,0,0,0.01); }
+.data-row-card { padding: 18px; border: 2px solid var(--border-line); border-radius: 12px; margin-bottom: 16px; background: var(--item-row-bg); box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
 .data-row-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 .data-row-card-title { font-weight: 800; font-size: 16px; color: var(--text-heading); }
 .data-row-card-desc { color: var(--text-sub); font-size: 14px; margin-bottom: 14px; line-height: 1.5; font-weight: 500; }
@@ -88,7 +88,9 @@ button:hover, .action-element-btn:hover { border-color: var(--border-line); back
 .data-row-card-meta strong { color: var(--text-heading); }
 .data-row-card-actions { display: flex; gap: 8px; margin-top: 14px; border-top: 2px solid var(--border-line); padding-top: 12px; flex-wrap: wrap; }
 .completion-block-area { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; border: 2px solid var(--border-line); padding: 12px; border-radius: 12px; background: var(--bg-window); }
-.completion-block-area input[type="text"] { border-radius: 24px; padding: 10px 14px; border: 2px solid var(--border-line); }
+.modal-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+.modal-content { background: var(--bg-panel); border: 2px solid var(--border-line); padding: 24px; border-radius: 12px; max-width: 600px; width: 90%; box-shadow: 0 10px 25px rgba(0,0,0,0.1); position: relative; }
+.modal-close { position: absolute; top: 12px; right: 16px; background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text-heading); font-weight: 800; }
 .hidden { display: none !important; }
 @media (max-width: 868px) {
     .split-layout { flex-direction: column; }

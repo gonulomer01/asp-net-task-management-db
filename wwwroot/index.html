@@ -23,6 +23,7 @@
         <div class="nav-bar">
             <button id="btnManageCategories" class="nav-link-btn hidden" onclick="window.location.href='/categories.html'" data-key="btn_cats"></button>
             <button id="btnManageUsers" class="nav-link-btn hidden" onclick="window.location.href='/users.html'" data-key="btn_users"></button>
+            <button id="btnManageDepartments" class="nav-link-btn hidden" onclick="window.location.href='/departments.html'" data-key="btn_depts"></button>
             <button class="nav-link-btn" onclick="window.location.href='/profile.html'" data-key="btn_prof"></button>
         </div>
 
@@ -44,15 +45,15 @@
                     </div>
                     <div class="field-block">
                         <label data-key="start_label"></label>
-                        <input type="datetime-local" id="taskStartDate" required>
+                        <input type="datetime-local" id="taskStartDate" max="9999-12-31T23:59" required>
                     </div>
                     <div class="field-block">
                         <label data-key="end_label"></label>
-                        <input type="datetime-local" id="taskEndDate" required>
+                        <input type="datetime-local" id="taskEndDate" max="9999-12-31T23:59" required>
                     </div>
                     <div class="field-block">
                         <label data-key="desc_label"></label>
-                        <textarea id="taskDescription" rows="3"></textarea>
+                        <textarea id="taskDescription" rows="3" style="resize: vertical; border-radius: 24px;"></textarea>
                     </div>
                     <button type="submit" id="taskSubmitBtn" class="submit-core-btn" data-key="save"></button>
                     <button type="button" id="taskCancelBtn" class="abort-btn hidden" onclick="resetTaskForm()" data-key="cancel"></button>
@@ -71,16 +72,21 @@
         const loggedInUserId = parseInt(localStorage.getItem('userId'));
         const loggedInUserRole = localStorage.getItem('userRole');
 
+        if (!loggedInUserRole) { window.location.href = '/login.html'; }
+
         document.getElementById('taskFormTitle').textContent = getLang() === 'tr' ? "GÖREV TANIMLAMA" : "TASK DEFINITION";
         document.getElementById('listTitleHeader').textContent = getLang() === 'tr' ? "AKTİF GÖREV HAVUZU" : "ACTIVE TASK POOL";
 
         function initPage() {
             document.getElementById('topInfoAreaUsername').textContent = localStorage.getItem('username');
-            document.getElementById('topInfoAreaRoleDept').textContent = lang('role_' + loggedInUserRole.toLowerCase()) + " - " + localStorage.getItem('userDept');
+            
+            const transRole = lang('role_' + loggedInUserRole.toLowerCase());
+            document.getElementById('topInfoAreaRoleDept').textContent = transRole + " - " + localStorage.getItem('userDept');
             
             if (loggedInUserRole === 'Admin') {
                 document.getElementById('btnManageCategories').classList.remove('hidden');
                 document.getElementById('btnManageUsers').classList.remove('hidden');
+                document.getElementById('btnManageDepartments').classList.remove('hidden');
             }
             populateDropdowns();
             fetchTasks();
@@ -101,7 +107,8 @@
             } else {
                 userSelect.disabled = false;
                 users.forEach(u => {
-                    userSelect.innerHTML += `<option value="${u.id}">${escapeHtml(u.username)} (${escapeHtml(u.department)})</option>`;
+                    const transR = lang('role_' + u.role.toLowerCase());
+                    userSelect.innerHTML += `<option value="${u.id}">${escapeHtml(u.username)} (${escapeHtml(u.department)} / ${escapeHtml(transR)})</option>`;
                 });
             }
 
@@ -120,6 +127,8 @@
             const container = document.getElementById('taskList');
             container.innerHTML = '';
             
+            window.taskNotes = window.taskNotes || {};
+            
             data.forEach(x => {
                 let badgeText = lang('pending');
                 let badgeClass = 'badge-pending';
@@ -137,7 +146,11 @@
                 if (x.status === 'Pending' && x.userId === loggedInUserId) {
                     actionsHtml += `
                         <div class="completion-block-area">
-                            <input type="text" id="note_${x.id}" placeholder="Görev tamamlama notu yazın...">
+                            <div style="position: relative; width: 100%;">
+                                <textarea id="note_${x.id}" rows="2" style="padding-right: 90px; resize: vertical; border-radius: 24px;" placeholder="${lang('task_note_placeholder')}"></textarea>
+                                <button type="button" onclick="document.getElementById('txt_file_${x.id}').click()" style="position: absolute; right: 8px; top: 8px; padding: 4px 10px; font-size: 11px; border-radius: 24px; background: var(--btn-prime-bg); color: var(--btn-prime-text); border: 1px solid var(--border-line);">+ TXT</button>
+                                <input type="file" id="txt_file_${x.id}" accept=".txt" style="display:none" onchange="readTxtToTextarea(${x.id})">
+                            </div>
                             <input type="file" id="file_${x.id}" style="display:none" onchange="uploadCompletionFile(${x.id})">
                             <button onclick="document.getElementById('file_${x.id}').click()">${lang('action_complete_upload')}</button>
                         </div>
@@ -145,10 +158,10 @@
                 }
 
                 if (loggedInUserRole === 'Admin' || x.createdById === loggedInUserId) {
-                    actionsHtml += `
-                        <button onclick="startEditTask(${x.id}, '${escapeHtml(x.title)}', ${x.userId}, ${x.categoryId || 'null'}, '${x.startDate}', '${x.endDate}', '${escapeHtml(x.description || '')}')">${lang('action_edit')}</button>
-                        <button class="abort-btn" onclick="deleteTask(${x.id})">${lang('action_delete')}</button>
-                    `;
+                    if (x.status === 'Pending') {
+                        actionsHtml += `<button onclick="startEditTask(${x.id}, '${escapeHtml(x.title)}', ${x.userId}, ${x.categoryId || 'null'}, '${x.startDate}', '${x.endDate}', '${escapeHtml(x.description || '')}')">${lang('action_edit')}</button>`;
+                    }
+                    actionsHtml += `<button class="abort-btn" onclick="deleteTask(${x.id})">${lang('action_delete')}</button>`;
                     
                     if (x.status === 'Completed' && x.createdById === loggedInUserId) {
                         actionsHtml += `
@@ -158,8 +171,29 @@
                     }
                 }
 
-                let imgHtml = x.completedImagePath ? `<div style="margin:12px 0;"><a href="${x.completedImagePath}" target="_blank"><img src="${x.completedImagePath}" style="max-width:140px; border:2px solid var(--border-line);"></a></div>` : '';
-                let noteHtml = x.completionNote ? `<span><strong>📝 ${lang('task_note')}:</strong> ${escapeHtml(x.completionNote)}</span>` : '';
+                let fileViewHtml = '';
+                if (x.status === 'Completed') {
+                    window.taskNotes[x.id] = x.completionNote || '';
+                    fileViewHtml = `<div style="margin:12px 0; display:flex; gap:8px; flex-wrap:wrap;">`;
+                    
+                    if (x.completedImagePath) {
+                        const pathLower = x.completedImagePath.toLowerCase();
+                        const isImg = pathLower.endsWith('.jpg') || pathLower.endsWith('.jpeg') || pathLower.endsWith('.png') || pathLower.endsWith('.gif');
+                        
+                        if (isImg) {
+                            fileViewHtml += `<button onclick="showImageModal('${x.completedImagePath}')">${lang('action_view_proof')}</button>`;
+                        }
+                        fileViewHtml += `<a href="${x.completedImagePath}" download class="action-element-btn">${lang('download_file')}</a>`;
+                    }
+                    
+                    if (x.completionNote) {
+                        fileViewHtml += `<button onclick="downloadNoteAsTxt(${x.id})" class="action-element-btn">${lang('download_note')}</button>`;
+                    }
+                    
+                    fileViewHtml += `</div>`;
+                }
+
+                const transCatName = x.categoryName; 
 
                 container.innerHTML += `
                     <div class="data-row-card">
@@ -168,14 +202,13 @@
                             <span class="badge ${badgeClass}">${badgeText}</span>
                         </div>
                         <div class="data-row-card-desc">${escapeHtml(x.description || '')}</div>
-                        ${imgHtml}
+                        ${fileViewHtml}
                         <div class="data-row-card-meta">
-                            <span><strong>👤 ${lang('task_assignee')}:</strong> ${escapeHtml(x.userName)}</span>
-                            <span><strong>✍️ ${lang('task_creator')}:</strong> ${escapeHtml(x.createdByName)}</span>
-                            <span><strong>📁 ${lang('task_category')}:</strong> ${escapeHtml(x.categoryName)}</span>
-                            <span><strong>📅 ${lang('task_timeline')}:</strong> ${new Date(x.startDate).toLocaleString()} - ${new Date(x.endDate).toLocaleString()}</span>
-                            ${noteHtml}
-                            <span><strong>⭐ ${lang('task_score')}:</strong> ${scoreText}</span>
+                            <span><strong>${lang('task_assignee')}:</strong> ${escapeHtml(x.userName)}</span>
+                            <span><strong>${lang('task_creator')}:</strong> ${escapeHtml(x.createdByName)}</span>
+                            <span><strong>${lang('task_category')}:</strong> ${escapeHtml(transCatName)}</span>
+                            <span><strong>${lang('task_timeline')}:</strong> ${new Date(x.startDate).toLocaleString()} - ${new Date(x.endDate).toLocaleString()}</span>
+                            <span><strong>${lang('task_score')}:</strong> ${scoreText}</span>
                         </div>
                         <div class="data-row-card-actions">${actionsHtml}</div>
                     </div>`;
@@ -183,14 +216,50 @@
             translateStaticElements();
         }
 
+        function readTxtToTextarea(id) {
+            const fileInput = document.getElementById(`txt_file_${id}`);
+            if (fileInput.files.length === 0) return;
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById(`note_${id}`).value = e.target.result;
+            };
+            reader.readAsText(file);
+        }
+
+        function downloadNoteAsTxt(id) {
+            const text = window.taskNotes[id] || '';
+            const blob = new Blob([text], { type: 'text/plain;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `gorev_notu_${id}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
         document.getElementById('taskForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+
+            const sDateVal = document.getElementById('taskStartDate').value;
+            const eDateVal = document.getElementById('taskEndDate').value;
+
+            const sYear = parseInt(sDateVal.split('-')[0]);
+            const eYear = parseInt(eDateVal.split('-')[0]);
+
+            if (sYear < 2025 || sYear > 2035 || eYear < 2025 || eYear > 2035) {
+                alert(lang('DATE_YEAR_ABSURD'));
+                return;
+            }
+
             const payload = {
                 title: document.getElementById('taskTitle').value,
                 userId: parseInt(document.getElementById('taskUserId').value),
                 categoryId: parseInt(document.getElementById('taskCategoryId').value),
-                startDate: document.getElementById('taskStartDate').value,
-                endDate: document.getElementById('taskEndDate').value,
+                startDate: sDateVal,
+                endDate: eDateVal,
                 description: document.getElementById('taskDescription').value,
                 status: "Pending"
             };
@@ -202,7 +271,18 @@
                 headers: getAuthHeaders(),
                 body: JSON.stringify(payload)
             });
-            if (res.ok) { resetTaskForm(); fetchTasks(); }
+            
+            if (res.ok) { 
+                resetTaskForm(); 
+                fetchTasks(); 
+            } else {
+                const errData = await res.json();
+                if (errData.error && dict[getLang()][errData.error]) {
+                    alert(lang(errData.error));
+                } else {
+                    alert("İşlem sırasında bir hata oluştu.");
+                }
+            }
         });
 
         async function uploadCompletionFile(id) {

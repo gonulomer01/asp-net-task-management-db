@@ -5,7 +5,6 @@ using TaskManagementAPI.Models;
 using TaskManagementAPI.Helpers;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace TaskManagementAPI.Controllers
 {
@@ -23,12 +22,18 @@ namespace TaskManagementAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-            return await _context.Users.ToListAsync();
+            var users = await _context.Users.ToListAsync();
+            foreach (var u in users)
+            {
+                u.Password = string.Empty;
+            }
+            return users;
         }
 
         [HttpPost]
         public async Task<ActionResult<User>> CreateUser(User user)
         {
+            if (!Request.Headers.TryGetValue("X-User-Role", out var userRole) || userRole != "Admin") return Forbid();
             user.Password = PasswordHasher.HashPassword(user.Password);
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
@@ -40,12 +45,19 @@ namespace TaskManagementAPI.Controllers
         {
             if (id != user.Id) return BadRequest();
 
-            if (!user.Password.Contains('.'))
+            var existing = await _context.Users.FindAsync(id);
+            if (existing == null) return NotFound();
+
+            existing.Username = user.Username;
+            existing.Email = user.Email;
+            existing.Role = user.Role;
+            existing.Department = user.Department;
+
+            if (!string.IsNullOrEmpty(user.Password))
             {
-                user.Password = PasswordHasher.HashPassword(user.Password);
+                existing.Password = PasswordHasher.HashPassword(user.Password);
             }
 
-            _context.Entry(user).State = EntityState.Modified;
             await _context.SaveChangesAsync();
             return NoContent();
         }
@@ -53,6 +65,8 @@ namespace TaskManagementAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
+            if (!Request.Headers.TryGetValue("X-User-Role", out var userRole) || userRole != "Admin") return Forbid();
+
             var user = await _context.Users.FindAsync(id);
             if (user == null) return NotFound();
 

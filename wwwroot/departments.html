@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kategori Yönetimi</title>
+    <title>Departman Yönetimi</title>
     <link rel="stylesheet" href="/css/style.css">
     <script src="/js/shared.js"></script>
     <script>if (!localStorage.getItem('userId') || localStorage.getItem('userRole') !== 'Admin') { window.location.href = '/index.html'; }</script>
@@ -13,7 +13,7 @@
     <div class="system-view-header">
         <div class="system-header-title-group">
             <div class="corner-branding" data-key="site_title"></div>
-            <h1 data-key="categories_header"></h1>
+            <h1 data-key="departments_header"></h1>
         </div>
         <div id="headerRightActions" class="header-right-actions"></div>
     </div>
@@ -29,34 +29,30 @@
 
         <div class="layout-grid">
             <div class="panel-card-form">
-                <h2 data-key="categories_form_title"></h2>
-                <form id="categoryForm">
+                <h2 data-key="departments_form_title"></h2>
+                <form id="departmentForm">
                     <div class="field-block">
-                        <label data-key="cat_name_label"></label>
-                        <input type="text" id="categoryName" required>
-                    </div>
-                    <div class="field-block">
-                        <label data-key="cat_desc_label"></label>
-                        <input type="text" id="categoryDescription">
+                        <label data-key="dept_name_label"></label>
+                        <input type="text" id="departmentName" required>
                     </div>
                     <button type="submit" class="submit-core-btn" data-key="save"></button>
                 </form>
             </div>
             <div class="panel-card-list">
-                <h3 data-key="categories_list_title"></h3>
-                <div id="categoryList"></div>
+                <h3 data-key="departments_list_title"></h3>
+                <div id="departmentList"></div>
             </div>
         </div>
     </div>
 
     <script>
-        let editingCategoryId = null;
+        let editingDepartmentId = null;
         const loggedInUserRole = localStorage.getItem('userRole');
 
-        async function fetchCategories() {
-            const res = await fetch('/api/categories');
+        async function fetchDepartments() {
+            const res = await fetch('/api/departments');
             const data = await res.json();
-            const container = document.getElementById('categoryList');
+            const container = document.getElementById('departmentList');
             container.innerHTML = '';
             data.forEach(x => {
                 container.innerHTML += `
@@ -64,44 +60,38 @@
                         <div class="data-row-card-header">
                             <div class="data-row-card-title">${escapeHtml(x.name)}</div>
                         </div>
-                        <div class="data-row-card-desc">
-                            ${escapeHtml(x.description || lang('text_none'))}
-                        </div>
                         <div class="data-row-card-actions">
-                            <button onclick="startEditCategory(${x.id}, '${escapeHtml(x.name)}', '${escapeHtml(x.description || '')}')">${lang('action_edit')}</button>
-                            <button class="abort-btn" onclick="deleteCategory(${x.id})">${lang('action_delete')}</button>
+                            <button onclick="startEditDepartment(${x.id}, '${escapeHtml(x.name)}')">${lang('action_edit')}</button>
+                            <button class="abort-btn" onclick="deleteDepartment(${x.id})">${lang('action_delete')}</button>
                         </div>
                     </div>`;
             });
             translateStaticElements();
         }
 
-        document.getElementById('categoryForm').addEventListener('submit', async (e) => {
+        document.getElementById('departmentForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const name = document.getElementById('categoryName').value;
-            const description = document.getElementById('categoryDescription').value;
-            const payload = { name, description };
-            if (editingCategoryId) payload.id = editingCategoryId;
+            const name = document.getElementById('departmentName').value;
+            const payload = { id: editingDepartmentId, name };
 
-            const res = await fetch(editingCategoryId ? `/api/categories/${editingCategoryId}` : '/api/categories', {
-                method: editingCategoryId ? 'PUT' : 'POST',
+            const res = await fetch(editingDepartmentId ? `/api/departments/${editingDepartmentId}` : '/api/departments', {
+                method: editingDepartmentId ? 'PUT' : 'POST',
                 headers: getAuthHeaders(),
                 body: JSON.stringify(payload)
             });
-            if (res.ok) { editingCategoryId = null; document.getElementById('categoryForm').reset(); fetchCategories(); }
+            if (res.ok) { editingDepartmentId = null; document.getElementById('departmentForm').reset(); fetchDepartments(); }
         });
 
-        function startEditCategory(id, name, desc) {
-            editingCategoryId = id;
-            document.getElementById('categoryName').value = name;
-            document.getElementById('categoryDescription').value = desc;
+        function startEditDepartment(id, name) {
+            editingDepartmentId = id;
+            document.getElementById('departmentName').value = name;
         }
 
-        async function deleteCategory(id) {
+        async function deleteDepartment(id) {
             if (!confirm("Silinsin mi?")) return;
-            const res = await fetch(`/api/categories/${id}`, { method: 'DELETE', headers: getAuthHeaders() });
+            const res = await fetch(`/api/departments/${id}`, { method: 'DELETE', headers: getAuthHeaders() });
             if (res.ok) {
-                fetchCategories();
+                fetchDepartments();
             } else {
                 const errData = await res.json();
                 if (errData.error && dict[getLang()][errData.error]) {
@@ -112,15 +102,15 @@
             }
         }
 
-        function initCategoriesPage() {
+        function initDepartmentsPage() {
             if (loggedInUserRole === 'Admin') {
+                document.getElementById('btnManageCategories').classList.remove('hidden');
                 document.getElementById('btnManageUsers').classList.remove('hidden');
-                document.getElementById('btnManageDepartments').classList.remove('hidden');
             }
-            fetchCategories();
+            fetchDepartments();
         }
 
-        initCategoriesPage();
+        initDepartmentsPage();
     </script>
 </body>
 </html>

@@ -19,6 +19,14 @@
     </div>
 
     <div class="workspace-wrapper">
+        <div class="nav-bar">
+            <button id="btnHome" class="nav-link-btn" onclick="window.location.href='/index.html'" data-key="btn_home"></button>
+            <button id="btnManageCategories" class="nav-link-btn hidden" onclick="window.location.href='/categories.html'" data-key="btn_cats"></button>
+            <button id="btnManageUsers" class="nav-link-btn hidden" onclick="window.location.href='/users.html'" data-key="btn_users"></button>
+            <button id="btnManageDepartments" class="nav-link-btn hidden" onclick="window.location.href='/departments.html'" data-key="btn_depts"></button>
+            <button id="btnProfile" class="nav-link-btn hidden" onclick="window.location.href='/profile.html'" data-key="btn_prof"></button>
+        </div>
+
         <div class="panel-card-form" style="width:100%; max-width:400px; margin:0 auto;">
             <h2 data-key="profile_form_title"></h2>
             <form id="profileForm">
@@ -28,7 +36,7 @@
                 </div>
                 <div class="field-block">
                     <label data-key="password"></label>
-                    <input type="password" id="profPassword" required>
+                    <input type="password" id="profPassword">
                 </div>
                 <div class="field-block">
                     <label data-key="email"></label>
@@ -36,12 +44,7 @@
                 </div>
                 <div class="field-block">
                     <label data-key="department"></label>
-                    <select id="profDepartment">
-                        <option value="Ar-Ge">Ar-Ge</option>
-                        <option value="Bilgi İşlem">Bilgi İşlem</option>
-                        <option value="İnsan Kaynakları">İnsan Kaynakları</option>
-                        <option value="Yönetim">Yönetim</option>
-                    </select>
+                    <select id="profDepartment" required></select>
                 </div>
                 <button type="submit" class="submit-core-btn" data-key="save"></button>
             </form>
@@ -52,13 +55,31 @@
         const loggedInUserId = localStorage.getItem('userId');
         const loggedInUserRole = localStorage.getItem('userRole');
 
+        async function populateDepartments() {
+            const res = await fetch('/api/departments');
+            const depts = await res.json();
+            const select = document.getElementById('profDepartment');
+            select.innerHTML = '';
+            depts.forEach(d => {
+                select.innerHTML += `<option value="${escapeHtml(d.name)}">${escapeHtml(d.name)}</option>`;
+            });
+        }
+
         async function loadProfileData() {
+            if (loggedInUserRole === 'Admin') {
+                document.getElementById('btnManageCategories').classList.remove('hidden');
+                document.getElementById('btnManageUsers').classList.remove('hidden');
+                document.getElementById('btnManageDepartments').classList.remove('hidden');
+            } else {
+                document.getElementById('btnProfile').classList.remove('hidden');
+            }
+            await populateDepartments();
             const res = await fetch('/api/users');
             const users = await res.json();
             const me = users.find(u => u.id == loggedInUserId);
             if (me) {
                 document.getElementById('profUsername').value = me.username;
-                document.getElementById('profPassword').value = me.password;
+                document.getElementById('profPassword').value = '';
                 document.getElementById('profEmail').value = me.email || '';
                 document.getElementById('profDepartment').value = me.department;
             }

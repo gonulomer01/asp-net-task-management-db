@@ -10,6 +10,7 @@ namespace TaskManagementAPI.Data
         public DbSet<User> Users { get; set; } = null!;
         public DbSet<Category> Categories { get; set; } = null!;
         public DbSet<TaskItem> Tasks { get; set; } = null!;
+        public DbSet<Department> Departments { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -34,6 +35,14 @@ namespace TaskManagementAPI.Data
                 entity.Property(e => e.Name).HasColumnName("name").IsRequired().HasMaxLength(50);
                 entity.Property(e => e.Description).HasColumnName("description");
                 entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+            });
+
+            modelBuilder.Entity<Department>(entity =>
+            {
+                entity.ToTable("departments");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Name).HasColumnName("name").IsRequired().HasMaxLength(100);
             });
 
             modelBuilder.Entity<TaskItem>(entity =>

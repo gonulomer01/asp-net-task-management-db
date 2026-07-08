@@ -19,6 +19,14 @@
     </div>
     
     <div class="workspace-wrapper">
+        <div class="nav-bar">
+            <button id="btnHome" class="nav-link-btn" onclick="window.location.href='/index.html'" data-key="btn_home"></button>
+            <button id="btnManageCategories" class="nav-link-btn hidden" onclick="window.location.href='/categories.html'" data-key="btn_cats"></button>
+            <button id="btnManageUsers" class="nav-link-btn hidden" onclick="window.location.href='/users.html'" data-key="btn_users"></button>
+            <button id="btnManageDepartments" class="nav-link-btn hidden" onclick="window.location.href='/departments.html'" data-key="btn_depts"></button>
+            <button id="btnProfile" class="nav-link-btn" onclick="window.location.href='/profile.html'" data-key="btn_prof"></button>
+        </div>
+
         <div class="layout-grid">
             <div class="panel-card-form">
                 <h2 data-key="users_form_title"></h2>
@@ -29,7 +37,7 @@
                     </div>
                     <div class="field-block">
                         <label data-key="password"></label>
-                        <input type="password" id="userPassword" required>
+                        <input type="password" id="userPassword">
                     </div>
                     <div class="field-block">
                         <label data-key="email"></label>
@@ -37,12 +45,7 @@
                     </div>
                     <div class="field-block">
                         <label data-key="department"></label>
-                        <select id="userDepartment">
-                            <option value="Ar-Ge">Ar-Ge</option>
-                            <option value="Bilgi İşlem">Bilgi İşlem</option>
-                            <option value="İnsan Kaynakları">İnsan Kaynakları</option>
-                            <option value="Yönetim">Yönetim</option>
-                        </select>
+                        <select id="userDepartment" required></select>
                     </div>
                     <div class="field-block">
                         <label data-key="role"></label>
@@ -63,6 +66,17 @@
 
     <script>
         let editingUserId = null;
+        const loggedInUserRole = localStorage.getItem('userRole');
+
+        async function populateDepartments() {
+            const res = await fetch('/api/departments');
+            const depts = await res.json();
+            const select = document.getElementById('userDepartment');
+            select.innerHTML = '';
+            depts.forEach(d => {
+                select.innerHTML += `<option value="${escapeHtml(d.name)}">${escapeHtml(d.name)}</option>`;
+            });
+        }
 
         async function fetchUsers() {
             const res = await fetch('/api/users');
@@ -80,7 +94,7 @@
                             ${lang('text_mail')}: ${escapeHtml(x.email || lang('text_none'))} | ${lang('text_dept')}: ${escapeHtml(x.department)} | ${lang('text_role')}: ${translatedRole}
                         </div>
                         <div class="data-row-card-actions">
-                            <button onclick="startEditUser(${x.id}, '${escapeHtml(x.username)}', '${escapeHtml(x.password)}', '${escapeHtml(x.email || '')}', '${escapeHtml(x.role)}', '${escapeHtml(x.department)}')">${lang('action_edit')}</button>
+                            <button onclick="startEditUser(${x.id}, '${escapeHtml(x.username)}', '${escapeHtml(x.email || '')}', '${escapeHtml(x.role)}', '${escapeHtml(x.department)}')">${lang('action_edit')}</button>
                             <button class="abort-btn" onclick="deleteUser(${x.id})">${lang('action_delete')}</button>
                         </div>
                     </div>`;
@@ -90,9 +104,14 @@
 
         document.getElementById('userForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            const passVal = document.getElementById('userPassword').value;
+            if (!editingUserId && !passVal) {
+                alert(getLang() === 'tr' ? "Şifre alanı zorunludur!" : "Password is required!");
+                return;
+            }
             const payload = {
                 username: document.getElementById('userUsername').value,
-                password: document.getElementById('userPassword').value,
+                password: passVal,
                 email: document.getElementById('userEmail').value,
                 role: document.getElementById('userRole').value,
                 department: document.getElementById('userDepartment').value
@@ -104,13 +123,13 @@
                 headers: getAuthHeaders(),
                 body: JSON.stringify(payload)
             });
-            if (res.ok) { editingUserId = null; document.getElementById('userForm').reset(); fetchUsers(); }
+            if (res.ok) { editingUserId = null; document.getElementById('userForm').reset(); initUsersPage(); }
         });
 
-        function startEditUser(id, name, pass, email, role, dept) {
+        function startEditUser(id, name, email, role, dept) {
             editingUserId = id;
             document.getElementById('userUsername').value = name;
-            document.getElementById('userPassword').value = pass;
+            document.getElementById('userPassword').value = '';
             document.getElementById('userEmail').value = email;
             document.getElementById('userRole').value = role;
             document.getElementById('userDepartment').value = dept;
@@ -131,7 +150,16 @@
             }
         }
 
-        fetchUsers();
+        async function initUsersPage() {
+            if (loggedInUserRole === 'Admin') {
+                document.getElementById('btnManageCategories').classList.remove('hidden');
+                document.getElementById('btnManageDepartments').classList.remove('hidden');
+            }
+            await populateDepartments();
+            await fetchUsers();
+        }
+
+        initUsersPage();
     </script>
 </body>
 </html>

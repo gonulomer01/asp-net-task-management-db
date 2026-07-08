@@ -3,51 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giriş Yap</title>
+    <title>Sisteme Giriş Yap</title>
     <link rel="stylesheet" href="/css/style.css">
     <script src="/js/shared.js"></script>
 </head>
 <body>
-
     <div class="split-layout">
         <div class="brand-side">
-            <img src="image.png" alt="Logo" class="brand-logo">
+            <img src="/image.png" class="brand-logo" alt="Melikgazi Belediyesi" width="513" height="912">
         </div>
         <div class="form-side">
             <div class="form-container">
-                <div class="site-context-title" data-key="site_title"></div>
+                <h1 class="site-context-title" data-key="site_title"></h1>
+                <h2 data-key="login_btn" style="font-size:18px; margin-bottom:20px; text-align:center; text-transform:uppercase; font-weight:800; color:var(--text-heading);"></h2>
                 <form id="loginForm">
                     <div class="field-block">
                         <label data-key="username"></label>
-                        <input type="text" id="loginUsername" required autocomplete="off">
+                        <input type="text" id="loginUsername" required>
                     </div>
                     <div class="field-block">
                         <label data-key="password"></label>
                         <input type="password" id="loginPassword" required>
                     </div>
                     <button type="submit" class="submit-core-btn" data-key="login_btn"></button>
+                    <div style="text-align:center; margin-top:16px; font-size:14px;">
+                        <span data-key="new_here"></span><a href="/register.html" data-key="register_btn" style="color:var(--btn-prime-bg); font-weight:700; text-decoration:none;"></a>
+                    </div>
                 </form>
-                <div class="meta-area">
-                    <span data-key="new_here"></span><a href="/register.html" data-key="register_btn"></a>
-                </div>
             </div>
         </div>
     </div>
-
     <script>
-        if (localStorage.getItem('userId')) { window.location.href = '/index.html'; }
-
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const username = document.getElementById('loginUsername').value;
-            const password = document.getElementById('loginPassword').value;
-
+            const payload = {
+                username: document.getElementById('loginUsername').value,
+                password: document.getElementById('loginPassword').value
+            };
             const res = await fetch('/api/auth/login', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ username, password })
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
             });
-
             if (res.ok) {
                 const data = await res.json();
                 localStorage.setItem('userId', data.id);
@@ -56,7 +53,7 @@
                 localStorage.setItem('userDept', data.department);
                 window.location.href = '/index.html';
             } else {
-                alert("Giriş başarısız.");
+                alert(getLang() === 'tr' ? "Kullanıcı adı veya şifre hatalı!" : "Invalid username or password!");
             }
         });
     </script>

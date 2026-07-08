@@ -81,6 +81,28 @@ namespace TaskManagementAPI.Controllers
         {
             if (!Request.Headers.TryGetValue("X-User-Id", out var userIdStr)) return Unauthorized();
 
+            var now = DateTime.Now;
+
+            if (task.StartDate.Year < 2025 || task.StartDate.Year > 2035 || task.EndDate.Year < 2025 || task.EndDate.Year > 2035)
+            {
+                return BadRequest(new { error = "DATE_YEAR_ABSURD" });
+            }
+
+            if (task.EndDate <= task.StartDate)
+            {
+                return BadRequest(new { error = "DATE_RANGE_INVALID" });
+            }
+
+            if (task.StartDate > now)
+            {
+                return BadRequest(new { error = "BOTH_DATES_FUTURE" });
+            }
+
+            if (task.EndDate < now)
+            {
+                return BadRequest(new { error = "BOTH_DATES_PAST" });
+            }
+
             task.CreatedById = int.Parse(userIdStr!);
             _context.Tasks.Add(task);
             await _context.SaveChangesAsync();
@@ -93,6 +115,28 @@ namespace TaskManagementAPI.Controllers
             if (!Request.Headers.TryGetValue("X-User-Id", out var userIdStr) || !Request.Headers.TryGetValue("X-User-Role", out var userRole))
             {
                 return Unauthorized();
+            }
+
+            var now = DateTime.Now;
+
+            if (task.StartDate.Year < 2025 || task.StartDate.Year > 2035 || task.EndDate.Year < 2025 || task.EndDate.Year > 2035)
+            {
+                return BadRequest(new { error = "DATE_YEAR_ABSURD" });
+            }
+
+            if (task.EndDate <= task.StartDate)
+            {
+                return BadRequest(new { error = "DATE_RANGE_INVALID" });
+            }
+
+            if (task.StartDate > now)
+            {
+                return BadRequest(new { error = "BOTH_DATES_FUTURE" });
+            }
+
+            if (task.EndDate < now)
+            {
+                return BadRequest(new { error = "BOTH_DATES_PAST" });
             }
 
             int loggedInUserId = int.Parse(userIdStr!);
