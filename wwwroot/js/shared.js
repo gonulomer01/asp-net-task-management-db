@@ -54,7 +54,10 @@ const dict = {
         text_mail: "Mail",
         text_dept: "Dept",
         text_role: "Rol",
-        text_none: "Yok"
+        text_none: "Yok",
+        role_admin: "Yönetici",
+        role_user: "Personel",
+        LAST_ADMIN_ERROR: "Sistemde kalan son yönetici silinemez! Son yöneticiyi silebilmek için lütfen önce yeni bir yönetici ekleyin."
     },
     en: {
         site_title: "TASK MANAGEMENT SYSTEM",
@@ -111,7 +114,10 @@ const dict = {
         text_mail: "Mail",
         text_dept: "Dept",
         text_role: "Role",
-        text_none: "None"
+        text_none: "None",
+        role_admin: "Administrator",
+        role_user: "Staff",
+        LAST_ADMIN_ERROR: "The last remaining admin cannot be deleted! To delete the last admin, please add a new admin first."
     }
 };
 

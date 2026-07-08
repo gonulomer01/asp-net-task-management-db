@@ -5,6 +5,7 @@ using TaskManagementAPI.Models;
 using TaskManagementAPI.Helpers;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TaskManagementAPI.Controllers
 {
@@ -54,6 +55,16 @@ namespace TaskManagementAPI.Controllers
         {
             var user = await _context.Users.FindAsync(id);
             if (user == null) return NotFound();
+
+            if (user.Role == "Admin")
+            {
+                var adminCount = await _context.Users.CountAsync(u => u.Role == "Admin");
+                if (adminCount <= 1)
+                {
+                    return BadRequest(new { error = "LAST_ADMIN_ERROR" });
+                }
+            }
+
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
             return NoContent();

@@ -70,13 +70,14 @@
             const container = document.getElementById('userList');
             container.innerHTML = '';
             data.forEach(x => {
+                const translatedRole = lang('role_' + x.role.toLowerCase());
                 container.innerHTML += `
                     <div class="data-row-card">
                         <div class="data-row-card-header">
                             <div class="data-row-card-title">${escapeHtml(x.username)}</div>
                         </div>
                         <div class="data-row-card-desc">
-                            ${lang('text_mail')}: ${escapeHtml(x.email || lang('text_none'))} | ${lang('text_dept')}: ${escapeHtml(x.department)} | ${lang('text_role')}: ${escapeHtml(x.role)}
+                            ${lang('text_mail')}: ${escapeHtml(x.email || lang('text_none'))} | ${lang('text_dept')}: ${escapeHtml(x.department)} | ${lang('text_role')}: ${translatedRole}
                         </div>
                         <div class="data-row-card-actions">
                             <button onclick="startEditUser(${x.id}, '${escapeHtml(x.username)}', '${escapeHtml(x.password)}', '${escapeHtml(x.email || '')}', '${escapeHtml(x.role)}', '${escapeHtml(x.department)}')">${lang('action_edit')}</button>
@@ -118,7 +119,16 @@
         async function deleteUser(id) {
             if (!confirm("Kullanıcı silinsin mi?")) return;
             const res = await fetch(`/api/users/${id}`, { method: 'DELETE', headers: getAuthHeaders() });
-            if (res.ok) fetchUsers();
+            if (res.ok) {
+                fetchUsers();
+            } else {
+                const errData = await res.json();
+                if (errData.error && dict[getLang()][errData.error]) {
+                    alert(lang(errData.error));
+                } else {
+                    alert("Hata oluştu.");
+                }
+            }
         }
 
         fetchUsers();

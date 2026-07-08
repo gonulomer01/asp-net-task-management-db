@@ -76,7 +76,7 @@
 
         function initPage() {
             document.getElementById('topInfoAreaUsername').textContent = localStorage.getItem('username');
-            document.getElementById('topInfoAreaRoleDept').textContent = loggedInUserRole + " - " + localStorage.getItem('userDept');
+            document.getElementById('topInfoAreaRoleDept').textContent = lang('role_' + loggedInUserRole.toLowerCase()) + " - " + localStorage.getItem('userDept');
             
             if (loggedInUserRole === 'Admin') {
                 document.getElementById('btnManageCategories').classList.remove('hidden');
