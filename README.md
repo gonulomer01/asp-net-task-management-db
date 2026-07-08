@@ -1,71 +1,72 @@
-# Melikgazi Belediyesi Kurumsal Görev Yönetim Sistemi
+# 🏛️ Melikgazi Belediyesi - Görev Yönetim Sistemi (Task Management System)
 
-Bu proje, Melikgazi Belediyesi staj programı kapsamında geliştirilmiş, kurumsal standartlara ve modern yazılım mimarisi prensiplerine uygun bir **Görev ve Personel Takip Portalı** uygulamasıdır. Sistem, sunucu yükünü hafifleten ve gelecekteki mobil/kiosk genişlemelerine tam uyum sağlayan ayrık bir mimari felsefeyle inşa edilmiştir.
+Bu proje, Melikgazi Belediyesi kurumsal kimliği ve ihtiyaçları doğrultusunda geliştirilmiş, rol bazlı yetkilendirme (RBAC), dinamik veri doğrulama kalkanları ve tam yerelleştirme (TR/EN) desteği barındıran kurumsal seviyede bir Görev Takip ve Yönetim Portalıdır (Enterprise SaaS Dashboard).
 
-## 🏗️ Mimari Yapı ve Teknoloji Yığını
+---
 
-Uygulamada monolitik (bağımlı) MVC yapısı yerine, endüstri standardı olan **API-First (Decoupled) Mimari** benimsenmiştir:
+## 🛠️ Teknik Mimari & Teknolojik Yığın (Tech Stack)
 
-- **Arka Plan (Backend):** .NET 10 Web API, Entity Framework Core, SQL Server ilişkisel veritabanı modeli. Sunucu sadece saf veri (JSON) servis eden bir RESTful mimari olarak kurgulanmıştır.
-- **Ön Yüz (Frontend):** `wwwroot` dizini altında barındırılan statik HTML5, CSS Variables ve Vanilla JS (Saf JavaScript). Harici hiçbir kütüphaneye bağımlılık (Zero-Dependency) olmadan **Client-Side Rendering (İstemci Taraflı Çizim)** yapılmıştır.
+### Arka Plan (Backend Katmanı)
+*   **Mimarî Yapı:** .NET 10.0 Web API (RESTful Architecture)
+*   **Veritabanı Katmanı:** Microsoft SQL Server (MSSQL)
+*   **ORM Motoru:** Entity Framework Core (EF Core) - Code First & Fluent API Kontrolleri
+*   **Güvenlik:** PBKDF2 (SHA256) Algoritması ile 100.000 iterasyonlu Tuzlanmış (Salting) Kriptografik Şifre Hasher
 
-## 🌟 Öne Çıkan Gelişmiş Özellikler
+### Ön Yüz (Frontend Katmanı)
+*   **Arayüz Tasarımı:** Kurumsal SaaS Standartlarında Pürüzsüz UI/UX (Microsoft Azure / Tailwind Esintili)
+*   **Tema Motoru:** Dahili CSS Değişkenleri (CSS Variables) ile Senkronize Çalışan Göz Yormayan Açık / Koyu Mod (Light & Dark Theme)
+*   **Dil Motoru:** İstemci Taraflı Asenkron Çok Dilli Dönüşüm Motoru (i18n Localization Engine - TR / EN)
 
-### 1. Kriptografik Veri Güvenliği (PBKDF2 & SHA256)
-Kullanıcı şifreleri veritabanında kesinlikle düz metin (plain-text) olarak saklanmaz. Sistem, .NET'in yerel kriptografi kütüphanesini kullanarak her şifre için rastgele bir `Salt` (tuzlama) değeri üretir ve **PBKDF2 (100.000 iterasyon) + SHA256** algoritmalarıyla geri döndürülemez şekilde hash'leyerek veritabanına kaydeder.
+---
 
-### 2. Gelişmiş Görev Akışı ve Zaman Kısıtları (Business Logic)
-- **Otomatik Zaman Aşımı Denetimi:** Beklemede (`Pending`) olan görevlerin bitiş tarihi şimdiki zamanı geçtiğinde, backend iş mantığı katmanı durumu otomatik olarak `Başarısız` (Failed) olarak günceller.
-- **Zaman Sınırlandırmalı Kanıt Yükleme:** Görevi alan personel, görevi tamamlamak için bir görsel kanıt (Resim) ve tamamlama notu girmek zorundadır. Bu işlem sadece görevin başlangıç ve bitiş tarihleri arasında yapılabilir; süre sınırları dışındaki istekler backend tarafından reddedilir.
-- **Yetkili Değerlendirme Skalası:** Görevi tamamlanan personel için sadece görevi tanımlayan amir (veya Admin) **1-100 arası** bir başarı puanlaması yapabilir. Puanlama sonrasında görevin durumu kararlı şekilde `Tamamlandı` olarak korunur.
+## 🚀 Öne Çıkan Gelişmiş Özellikler & İş Kuralları (Business Rules)
 
-### 3. Modüler Rol ve Departman Yönetimi
-Sistemde `Admin` ve `User` olmak üzere iki temel yetki rolü bulunur. Personel tanımlanırken `Ar-Ge`, `Bilgi İşlem`, `İnsan Kaynakları` ve `Yönetim` gibi departmanlar seçilebilir. Admin olmayan kullanıcılar sadece kendilerine atanan ve kendilerinin oluşturduğu görev havuzunu görebilir ve yönetebilir.
+### 1. Katı İlişkisel Veri Koruma Kalkanı (Cascade Protection)
+*   **Görev Havuzu Emniyeti:** Herhangi bir aktif görev atamasına ev sahipliği yapan bir **Görev Kategorisi** sistemden silinmeye çalışıldığında backend veri koruma motoru işlemi durdurur ve veri kaybını önlemek adına silme isteğini reddeder.
+*   **Personel Kadrosu Emniyeti:** Bir veya birden fazla personele atanmış olan kurumsal bir **Departman**, alt yönetim panelinden silinmeye çalışıldığında ilişkisel bütünlük denetlenir ve silme işlemi engellenerek kullanıcıya şık bir uyarı fırlatılır.
 
-### 4. Küresel Durum Yönetimi ve Hafızalı Yerelleştirme
-- **Persistent Theme Engine:** Kullanıcının seçtiği açık/koyu mod ayarı tarayıcı hafızasında (`localStorage`) saklanır. Sayfa geçişlerinde veya oturum kapatıldığında anlık parlama yaşatmadan pürüzsüz çalışır.
-- **Session-Agnostic Localization (TR/EN):** Uygulama hem statik elemanlarda hem de veritabanından dönen dinamik kart parametrelerinde tam dil desteğine (i18n) sahiptir. Seçilen dil oturum sonlandırılsa dahi hafızada kalır.
+### 2. Siber Güvenlik & DOM Sızıntısı Önleme (Data Leak Fix)
+*   **Şifre Hash Koruması:** Tarayıcıların "İncele" (Inspect Element) panellerinden veya JavaScript bellek modellerinden kullanıcı şifrelerinin siber saldırganlarca okunabilme riski kökten kapatılmıştır. Personel listeleme API servislerinde şifre alanları daha sunucudan çıkmadan tamamen temizlenir.
+*   **Kör Düzenleme (Blind Password Update):** Bir personel düzenlenirken şifre kutusu tamamen boş gelir. Eğer yeni şifre yazılmazsa mevcut kriptolu şifre aynen korunur; yeni şifre yazılırsa otomatik olarak yeniden tuzlanıp hash'lenerek SQL Server'a gönderilir.
+*   **Son Yönetici Koruması:** Sistemde kayıtlı olan son `Admin` (Yönetici) hesabının silinmesi, portalın sahipsiz kalmasını engellemek adına veritabanı seviyesinde bloke edilmiştir.
 
-## 🎨 Tasarım Sistemi (UI/UX)
+### 3. Çok Yönlü Dosya / Kanıt Teslim Mekanizması
+*   **Akıllı TXT Okuyucu:** Personeller görevi tamamlarken metin alanına elle not yazabilecekleri gibi, sağ tarafta bulunan `+ TXT` butonuna basarak seçtikleri yerel `.txt` dosyasının içeriğini asenkron olarak metin kutusuna otomatik okutabilirler.
+*   **İki Kanallı Bağımsız İndirme:** Görevi tanımlayan amir, personelin yüklediği ana kanıt dökümanını (Resim, PDF vb.) tek tıkla tarayıcı indirme tepsisini tetikleyerek indirebileceği gibi, personelin yazdığı tamamlama notunu da bağımsız bir butonla `.txt` formatında bilgisayarına indirebilir.
+*   **Popup İnceleme Modalı:** Yüklenen kanıt resimleri yeni sekmede açılmak yerine, sayfa içi entegre modal popup katmanında gözü yormadan incelenebilir.
 
-Görsel tasarım, jüri beklentilerini karşılayacak lüks ve ağırbaşlı bir mühendislik portalı çizgisindedir:
-- **Asimetrik Bölünmüş Ekran (Split-Screen):** Giriş ve kayıt ekranlarında sol tarafta belediye kurumsal amblemini barındıran akışkan bir odak alanı, sağ tarafta ise minimalist oval kapsül girdiler yer alır.
-- **Yüksek Kontrast ve Göz Sağlığı:** Açık modda keskin siyah kenarlıklar ve açık mavi tonlar hakimken; koyu modda gözü yormayan derin safir/gece laciverti (`#0b1120`) arka plan ile mat slate gri (`#475569`) kenarlıklar kontrastı sağlar.
-- **Modüler Kart Yapısı:** Personel ve kategoriler düz çizgiler yerine, dışa taşması engellenmiş, yerleşik esnek kutular (`data-row-card`) halinde listelenir.
+### 4. Zaman Sınırı ve Absürt Tarih Filtresi
+*   **Yıl Sınırlandırması:** Tarih giriş alanlarında 5 veya 6 haneli absürt yılların girilmesi (Örn: 9999 yılı) hem istemci hem sunucu taraflı engellenmiştir. Proje takvimi yılları **2025 - 2035** arasında sınırlandırılmıştır.
+*   **Mantıksal Tarih Sıralaması:** Bitiş tarihinin başlangıç tarihinden geride olması, iki tarihin de tamamen gelecekte veya tamamen geçmişte olması gibi mantık hatalarında görev ataması durdurulur ve görev hiç oluşturulmaz.
 
-## 🗄️ Veritabanı Şeması (SQL)
+---
 
-Uygulamanın çalışması için gerekli SQL Server tablo yapısı şu şekildedir:
+## 📁 Dosya Yapısı & Veri Akış Haritası
 
-```sql
-CREATE TABLE users (
-    id INT IDENTITY(1,1) PRIMARY KEY,
-    username VARCHAR(50) NOT NULL,
-    password VARCHAR(100) NOT NULL,
-    role VARCHAR(20) NOT NULL DEFAULT 'User',
-    department VARCHAR(50) NOT NULL DEFAULT 'Genel',
-    email VARCHAR(100) NULL,
-    created_at DATETIME2 NOT NULL DEFAULT GETDATE()
-);
-
-CREATE TABLE categories (
-    id INT IDENTITY(1,1) PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
-    description NVARCHAR(MAX) NULL,
-    created_at DATETIME2 NOT NULL DEFAULT GETDATE()
-);
-
-CREATE TABLE tasks (
-    id INT IDENTITY(1,1) PRIMARY KEY,
-    title VARCHAR(150) NOT NULL,
-    description NVARCHAR(MAX) NULL,
-    status VARCHAR(20) NOT NULL DEFAULT 'Pending',
-    user_id INT NOT NULL FOREIGN KEY REFERENCES users(id) ON DELETE CASCADE,
-    category_id INT NULL FOREIGN KEY REFERENCES categories(id) ON DELETE SET NULL,
-    start_date DATETIME2 NOT NULL DEFAULT GETDATE(),
-    end_date DATETIME2 NOT NULL DEFAULT GETDATE(),
-    completed_image_path NVARCHAR(MAX) NULL,
-    completion_note NVARCHAR(MAX) NULL,
-    admin_score INT NULL,
-    created_at DATETIME2 NOT NULL DEFAULT GETDATE()
-);
+```text
+TaskManagementAPI/
+│
+├── Controllers/
+│   ├── AuthController.cs        # Giriş ve kayıt işlemlerini yöneten kapı
+│   ├── UsersController.cs       # Şifre sızıntısı korumalı personel CRUD API'si
+│   ├── CategoriesController.cs  # İlişkisel görev kontrollü kategori API'si
+│   ├── DepartmentsController.cs # SQL Server bağlantılı departman CRUD API'si
+│   └── TasksController.cs       # Tarih filtreli ve dosya yönetimli görev iş motoru
+│
+├── Models/
+│   ├── User.cs                  # Kullanıcı veritabanı veri modeli
+│   ├── Category.cs              # Kategori veritabanı veri modeli
+│   ├── Department.cs            # Departman veritabanı veri modeli
+│   └── TaskItem.cs              # Görev veritabanı veri modeli
+│
+├── Data/
+│   └── AppDbContext.cs          # SQL Server Fluent API şema eşleştirme merkezi
+│
+└── wwwroot/                     # Ön yüz statik dökümanlar katmanı
+    ├── css/style.css            # 8px kurumsal SaaS kavisli Açık/Koyu mod tasarım kodları
+    ├── js/shared.js             # İki dilli (i18n) sözlük ve merkezi popup motoru
+    ├── index.html               # Görev yönetim ana komuta merkezi
+    ├── users.html               # Navigasyon gizlemeli personel kontrol paneli
+    ├── departments.html         # Dinamik kurumsal departman yönetim paneli
+    ├── categories.html          # Kategori ekleme ve düzenleme alanı
+    └── login.html               # Bölünmüş şablon (Split-layout) giriş ekranı
