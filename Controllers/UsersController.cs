@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TaskManagementAPI.Data;
 using TaskManagementAPI.Models;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace TaskManagementAPI.Controllers
 {
@@ -18,14 +19,13 @@ namespace TaskManagementAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetUsers()
+        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-            var users = await _context.Users.ToListAsync();
-            return Ok(users);
+            return await _context.Users.ToListAsync();
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateUser(User user)
+        public async Task<ActionResult<User>> CreateUser(User user)
         {
             _context.Users.Add(user);
             await _context.SaveChangesAsync();

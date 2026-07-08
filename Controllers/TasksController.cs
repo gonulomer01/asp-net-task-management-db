@@ -4,6 +4,8 @@ using TaskManagementAPI.Data;
 using TaskManagementAPI.Models;
 using System.Threading.Tasks;
 using System.Linq;
+using System.IO;
+using System;
 
 namespace TaskManagementAPI.Controllers
 {
@@ -27,14 +29,28 @@ namespace TaskManagementAPI.Controllers
             }
 
             int userId = int.Parse(userIdStr!);
-            var query = _context.Tasks.AsQueryable();
+            var dbTasks = await _context.Tasks.ToListAsync();
+            var now = DateTime.Now;
+            bool spaceChanged = false;
 
+            foreach (var t in dbTasks)
+            {
+                if (t.Status == "Pending" && now > t.EndDate)
+                {
+                    t.Status = "Başarısız";
+                    _context.Entry(t).State = EntityState.Modified;
+                    spaceChanged = true;
+                }
+            }
+            if (spaceChanged) await _context.SaveChangesAsync();
+
+            var query = _context.Tasks.AsQueryable();
             if (userRole != "Admin")
             {
-                query = query.Where(t => t.UserId == userId);
+                query = query.Where(t => t.UserId == userId || t.CreatedById == userId);
             }
 
-            var tasks = await query
+            var result = await query
                 .Include(t => t.User)
                 .Include(t => t.Category)
                 .Select(t => new
@@ -45,29 +61,26 @@ namespace TaskManagementAPI.Controllers
                     t.Status,
                     t.UserId,
                     t.CategoryId,
+                    t.CreatedById,
+                    t.StartDate,
+                    t.EndDate,
+                    t.CompletedImagePath,
+                    t.AdminScore,
                     UserName = t.User != null ? t.User.Username : "Yok",
-                    CategoryName = t.Category != null ? t.Category.Name : "Yok"
+                    CategoryName = t.Category != null ? t.Category.Name : "Yok",
+                    CreatedByName = _context.Users.Where(u => u.Id == t.CreatedById).Select(u => u.Username).FirstOrDefault() ?? "Sistem"
                 })
                 .ToListAsync();
 
-            return Ok(tasks);
+            return Ok(result);
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateTask(TaskItem task)
         {
-            if (!Request.Headers.TryGetValue("X-User-Id", out var userIdStr) || !Request.Headers.TryGetValue("X-User-Role", out var userRole))
-            {
-                return Unauthorized();
-            }
+            if (!Request.Headers.TryGetValue("X-User-Id", out var userIdStr)) return Unauthorized();
 
-            int loggedInUserId = int.Parse(userIdStr!);
-
-            if (userRole != "Admin")
-            {
-                task.UserId = loggedInUserId;
-            }
-
+            task.CreatedById = int.Parse(userIdStr!);
             _context.Tasks.Add(task);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetTasks), new { id = task.Id }, task);
@@ -85,15 +98,64 @@ namespace TaskManagementAPI.Controllers
             var existingTask = await _context.Tasks.AsNoTracking().FirstOrDefaultAsync(t => t.Id == id);
             if (existingTask == null) return NotFound();
 
-            if (userRole != "Admin" && existingTask.UserId != loggedInUserId) return Forbid();
+            if (userRole != "Admin" && existingTask.CreatedById != loggedInUserId) return Forbid();
             if (id != task.Id) return BadRequest();
 
-            if (userRole != "Admin")
+            _context.Entry(task).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
+        [HttpPost("{id}/complete")]
+        public async Task<IActionResult> CompleteTask(int id, [FromForm] IFormFile file)
+        {
+            if (!Request.Headers.TryGetValue("X-User-Id", out var userIdStr)) return Unauthorized();
+            int loggedInUserId = int.Parse(userIdStr!);
+
+            var task = await _context.Tasks.FindAsync(id);
+            if (task == null) return NotFound();
+            if (task.UserId != loggedInUserId) return Forbid();
+
+            var now = DateTime.Now;
+            if (now < task.StartDate || now > task.EndDate)
             {
-                task.UserId = loggedInUserId;
+                task.Status = "Başarısız";
+                await _context.SaveChangesAsync();
+                return BadRequest(new { error = "Tarih aralığı dışında işlem yapılamaz. Görev başarısız olarak işaretlendi." });
             }
 
-            _context.Entry(task).State = EntityState.Modified;
+            if (file == null || file.Length == 0) return BadRequest();
+
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+            if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
+
+            var uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
+            var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(fileStream);
+            }
+
+            task.CompletedImagePath = "/uploads/" + uniqueFileName;
+            task.Status = "Completed";
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+
+        [HttpPost("{id}/score")]
+        public async Task<IActionResult> ScoreTask(int id, [FromBody] int score)
+        {
+            if (!Request.Headers.TryGetValue("X-User-Id", out var userIdStr)) return Unauthorized();
+            int loggedInUserId = int.Parse(userIdStr!);
+
+            var task = await _context.Tasks.FindAsync(id);
+            if (task == null) return NotFound();
+            if (task.CreatedById != loggedInUserId) return Forbid();
+            if (task.Status != "Completed") return BadRequest();
+            if (score < 1 || score > 100) return BadRequest();
+
+            task.AdminScore = score;
             await _context.SaveChangesAsync();
             return NoContent();
         }
@@ -110,7 +172,7 @@ namespace TaskManagementAPI.Controllers
             var task = await _context.Tasks.FindAsync(id);
             if (task == null) return NotFound();
 
-            if (userRole != "Admin" && task.UserId != loggedInUserId) return Forbid();
+            if (userRole != "Admin" && task.CreatedById != loggedInUserId) return Forbid();
 
             _context.Tasks.Remove(task);
             await _context.SaveChangesAsync();

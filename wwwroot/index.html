@@ -3,169 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yönetim Paneli</title>
-    <script>
-        if (!localStorage.getItem('userId')) {
-            window.location.href = '/login.html';
-        }
-        if (localStorage.getItem('theme') === 'dark') {
-            document.documentElement.classList.add('dark');
-        }
-    </script>
-    <style>
-        :root {
-            --bg-base: #ffffff;
-            --bg-side: #fafafa;
-            --text-title: #388ff9;
-            --text-main: #262626;
-            --text-muted: #8e8e8e;
-            --border: #dbdbdb;
-            --input-bg: #ffffff;
-            --btn-bg: #111111;
-            --btn-text: #ffffff;
-            --badge-p-bg: #fef3c7;
-            --badge-p-text: #d97706;
-            --badge-c-bg: #dcfce7;
-            --badge-c-text: #15803d;
-        }
-        html.dark {
-            --bg-base: #0b0f19;
-            --bg-side: #111827;
-            --text-title: #388ff9;
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
-            --border: #1f2937;
-            --input-bg: #070a12;
-            --btn-bg: #ffffff;
-            --btn-text: #000000;
-            --badge-p-bg: #78350f;
-            --badge-p-text: #fde68a;
-            --badge-c-bg: #064e3b;
-            --badge-c-text: #a7f3d0;
-        }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 24px; background-color: var(--bg-base); color: var(--text-main); transition: background-color 0.3s, color 0.3s; }
-        .header-area { display: flex; justify-content: space-between; align-items: center; background: var(--bg-side); padding: 16px 24px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 24px; }
-        h1 { margin: 0; font-size: 22px; font-weight: 700; }
-        .nav-bar { display: flex; gap: 12px; margin-bottom: 24px; }
-        .main-container { display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; }
-        .form-box { width: 360px; background: var(--bg-side); border-radius: 16px; padding: 24px; border: 1px solid var(--border); box-sizing: border-box; }
-        .list-box { flex: 1; min-width: 400px; background: var(--bg-side); border-radius: 16px; padding: 24px; border: 1px solid var(--border); box-sizing: border-box; }
-        h2, h3 { margin-top: 0; color: var(--text-main); font-size: 16px; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
-        form { display: flex; flex-direction: column; gap: 16px; }
-        .form-group { display: flex; flex-direction: column; gap: 6px; }
-        .form-group label { font-size: 12px; font-weight: 600; color: var(--text-main); }
-        input, select, textarea { padding: 10px 16px; border: 1px solid var(--border); border-radius: 20px; font-size: 14px; background: var(--input-bg); color: var(--text-main); box-sizing: border-box; width: 100%; }
-        input:focus, select:focus, textarea:focus { border-color: var(--text-main); outline: none; }
-        button { padding: 8px 18px; border: 1px solid var(--border); border-radius: 20px; background: var(--bg-base); color: var(--text-main); cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s; }
-        button:hover { opacity: 0.8; }
-        .primary-btn { background: var(--btn-bg); color: var(--btn-text); border: none; padding: 12px; font-size: 14px; font-weight: 700; }
-        .danger-btn { color: #ef4444; border-color: #ef4444; }
-        .list-item { padding: 16px; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; background: var(--bg-base); }
-        .item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .item-title { font-weight: 700; font-size: 15px; }
-        .badge { font-size: 11px; padding: 4px 10px; border-radius: 12px; font-weight: 700; text-transform: uppercase; }
-        .badge-pending { background: var(--badge-p-bg); color: var(--badge-p-text); }
-        .badge-completed { background: var(--badge-c-bg); color: var(--badge-c-text); }
-        .item-desc { color: var(--text-muted); font-size: 13px; margin-bottom: 12px; }
-        .item-meta { font-size: 11px; color: var(--text-muted); border-top: 1px dashed var(--border); padding-top: 8px; display: flex; gap: 16px; }
-        .item-actions { display: flex; gap: 8px; margin-top: 12px; }
-        .hidden { display: none; }
-    </style>
+    <title>Yönetim Konsolu</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="/js/shared.js"></script>
+    <script>if (!localStorage.getItem('userId')) { window.location.href = '/login.html'; }</script>
 </head>
 <body>
 
-    <div class="header-area">
-        <h1>Ana Menü (<span id="topUsername"></span>)</h1>
-        <div>
-            <button onclick="toggleTheme()" style="margin-right: 8px;">Tema Değiştir</button>
-            <button class="danger-btn" onclick="logout()">Çıkış Yap</button>
+    <div class="system-view-header">
+        <div class="system-header-title-group">
+            <div class="corner-branding" data-key="site_title"></div>
+            <h1 id="topInfoArea"></h1>
         </div>
+        <div id="headerRightActions" class="header-right-actions"></div>
     </div>
 
-    <div class="nav-bar">
-        <button id="btnManageCategories" class="hidden" onclick="window.location.href='/categories.html'">Kategorileri Yönet</button>
-        <button id="btnManageUsers" class="hidden" onclick="window.location.href='/users.html'">Kullanıcıları Yönet</button>
-        <button onclick="window.location.href='/profile.html'">Profil Ayarları</button>
-    </div>
-
-    <div class="main-container">
-        <div class="form-box">
-            <h2 id="taskFormTitle">Yeni Görev Tanımla</h2>
-            <form id="taskForm">
-                <div class="form-group">
-                    <label>Görev Başlığı</label>
-                    <input type="text" id="taskTitle" required>
-                </div>
-                <div class="form-group">
-                    <label>Sorumlu Kullanıcı</label>
-                    <select id="taskUserId" required></select>
-                </div>
-                <div class="form-group">
-                    <label>Kategori</label>
-                    <select id="taskCategoryId" required></select>
-                </div>
-                <div class="form-group">
-                    <label>Durum</label>
-                    <select id="taskStatus">
-                        <option value="Pending">Pending</option>
-                        <option value="Completed">Completed</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Açıklama</label>
-                    <textarea id="taskDescription" rows="3"></textarea>
-                </div>
-                <button type="submit" id="taskSubmitBtn" class="primary-btn">Görevi Kaydet</button>
-                <button type="button" id="taskCancelBtn" class="hidden" onclick="resetTaskForm()">Vazgeç</button>
-            </form>
+    <div class="workspace-wrapper">
+        <div id="adminNavBlock" class="nav-bar hidden">
+            <button class="nav-link-btn" onclick="window.location.href='/categories.html'" data-key="btn_cats"></button>
+            <button class="nav-link-btn" onclick="window.location.href='/users.html'" data-key="btn_users"></button>
+            <button class="nav-link-btn" onclick="window.location.href='/profile.html'" data-key="btn_prof"></button>
+        </div>
+        <div id="userNavBlock" class="nav-bar">
+            <button class="nav-link-btn" onclick="window.location.href='/profile.html'" data-key="btn_prof"></button>
         </div>
 
-        <div class="list-box">
-            <h3>Görevler</h3>
-            <div id="taskList"></div>
+        <div class="layout-grid">
+            <div class="panel-card-form">
+                <h2 id="taskFormTitle"></h2>
+                <form id="taskForm">
+                    <div class="field-block">
+                        <label data-key="title_label"></label>
+                        <input type="text" id="taskTitle" required>
+                    </div>
+                    <div class="field-block">
+                        <label data-key="assignee_label"></label>
+                        <select id="taskUserId" required></select>
+                    </div>
+                    <div class="field-block">
+                        <label data-key="cat_label"></label>
+                        <select id="taskCategoryId" required></select>
+                    </div>
+                    <div class="field-block">
+                        <label data-key="start_label"></label>
+                        <input type="datetime-local" id="taskStartDate" required>
+                    </div>
+                    <div class="field-block">
+                        <label data-key="end_label"></label>
+                        <input type="datetime-local" id="taskEndDate" required>
+                    </div>
+                    <div class="field-block">
+                        <label data-key="desc_label"></label>
+                        <textarea id="taskDescription" rows="3"></textarea>
+                    </div>
+                    <button type="submit" id="taskSubmitBtn" class="submit-core-btn" data-key="save"></button>
+                    <button type="button" id="taskCancelBtn" class="abort-btn hidden" onclick="resetTaskForm()" data-key="cancel"></button>
+                </form>
+            </div>
+
+            <div class="panel-card-list">
+                <h3 id="listTitleHeader"></h3>
+                <div id="taskList"></div>
+            </div>
         </div>
     </div>
 
     <script>
         let editingTaskId = null;
+        const loggedInUserId = parseInt(localStorage.getItem('userId'));
+        const loggedInUserRole = localStorage.getItem('userRole');
 
-        function getAuthHeaders() {
-            return {
-                'Content-Type': 'application/json',
-                'X-User-Id': localStorage.getItem('userId'),
-                'X-User-Role': localStorage.getItem('userRole')
-            };
-        }
-
-        function toggleTheme() {
-            if (document.documentElement.classList.contains('dark')) {
-                document.documentElement.classList.remove('dark');
-                localStorage.setItem('theme', 'light');
-            } else {
-                document.documentElement.classList.add('dark');
-                localStorage.setItem('theme', 'dark');
-            }
-        }
+        document.getElementById('taskFormTitle').textContent = getLang() === 'tr' ? "GÖREV TANIMLAMA" : "TASK DEFINITION";
+        document.getElementById('listTitleHeader').textContent = getLang() === 'tr' ? "AKTİF GÖREV HAVUZU" : "ACTIVE TASK POOL";
 
         function initPage() {
-            document.getElementById('topUsername').textContent = localStorage.getItem('username') + " - " + localStorage.getItem('userRole');
-            
-            if (localStorage.getItem('userRole') === 'Admin') {
-                document.getElementById('btnManageCategories').classList.remove('hidden');
-                document.getElementById('btnManageUsers').classList.remove('hidden');
+            document.getElementById('topInfoArea').textContent = localStorage.getItem('username') + " [" + loggedInUserRole + " - " + localStorage.getItem('userDept') + "]";
+            if (loggedInUserRole === 'Admin') {
+                document.getElementById('adminNavBlock').classList.remove('hidden');
+                document.getElementById('userNavBlock').classList.add('hidden');
             }
             populateDropdowns();
             fetchTasks();
-        }
-
-        function logout() {
-            localStorage.clear();
-            window.location.href = '/login.html';
-        }
-
-        function escapeHtml(str) {
-            if (!str) return '';
-            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
 
         async function populateDropdowns() {
@@ -174,31 +92,25 @@
             const userSelect = document.getElementById('taskUserId');
             userSelect.innerHTML = '';
             
-            if (localStorage.getItem('userRole') !== 'Admin') {
+            if (loggedInUserRole !== 'Admin') {
                 const option = document.createElement('option');
-                option.value = localStorage.getItem('userId');
+                option.value = loggedInUserId;
                 option.textContent = localStorage.getItem('username');
                 userSelect.appendChild(option);
                 userSelect.disabled = true;
             } else {
                 userSelect.disabled = false;
                 users.forEach(u => {
-                    const option = document.createElement('option');
-                    option.value = u.id;
-                    option.textContent = u.username;
-                    userSelect.appendChild(option);
+                    userSelect.innerHTML += `<option value="${u.id}">${escapeHtml(u.username)} (${escapeHtml(u.department)})</option>`;
                 });
             }
 
             const resCats = await fetch('/api/categories');
             const cats = await resCats.json();
             const catSelect = document.getElementById('taskCategoryId');
-            catSelect.innerHTML = '<option value="">-- Kategori Seçin --</option>';
+            catSelect.innerHTML = '';
             cats.forEach(c => {
-                const option = document.createElement('option');
-                option.value = c.id;
-                option.textContent = c.name;
-                catSelect.appendChild(option);
+                catSelect.innerHTML += `<option value="${c.id}">${escapeHtml(c.name)}</option>`;
             });
         }
 
@@ -206,37 +118,79 @@
             const res = await fetch('/api/tasks', { headers: getAuthHeaders() });
             const data = await res.json();
             const container = document.getElementById('taskList');
-            container.innerHTML = data.length === 0 ? '<p style="font-size:14px;">Henüz atanmış bir görev bulunmuyor.</p>' : '';
+            container.innerHTML = '';
+            
             data.forEach(x => {
-                const badgeClass = x.status === 'Completed' ? 'badge-completed' : 'badge-pending';
+                let badgeText = lang('pending');
+                let badgeClass = 'badge-pending';
+                if (x.status === 'Completed') {
+                    badgeText = lang('completed');
+                    badgeClass = 'badge-completed';
+                } else if (x.status === 'Başarısız') {
+                    badgeText = lang('failed');
+                    badgeClass = 'badge-failed';
+                }
+
+                const scoreText = x.adminScore ? `${lang('score')}: ${x.adminScore}/100` : lang('not_scored');
+                let actionsHtml = '';
+
+                if (x.status === 'Pending' && x.userId === loggedInUserId) {
+                    actionsHtml += `
+                        <input type="file" id="file_${x.id}" style="display:none" onchange="uploadCompletionFile(${x.id})">
+                        <button onclick="document.getElementById('file_${x.id}').click()">${lang('action_complete_upload')}</button>
+                    `;
+                }
+
+                if (loggedInUserRole === 'Admin' || x.createdById === loggedInUserId) {
+                    actionsHtml += `
+                        <button onclick="startEditTask(${x.id}, '${escapeHtml(x.title)}', ${x.userId}, ${x.categoryId || 'null'}, '${x.startDate}', '${x.endDate}', '${escapeHtml(x.description || '')}')">${lang('action_edit')}</button>
+                        <button class="abort-btn" onclick="deleteTask(${x.id})">${lang('action_delete')}</button>
+                    `;
+                    
+                    if (x.status === 'Completed' && x.createdById === loggedInUserId) {
+                        actionsHtml += `
+                            <input type="number" id="score_val_${x.id}" min="1" max="100" data-placeholder-key="score_placeholder" style="width:100px; display:inline-block; margin-left:10px;">
+                            <button onclick="submitScore(${x.id})">${lang('action_score_btn')}</button>
+                        `;
+                    }
+                }
+
+                let imgHtml = x.completedImagePath ? `<div style="margin:12px 0;"><a href="${x.completedImagePath}" target="_blank"><img src="${x.completedImagePath}" style="max-width:140px; border-radius:6px; border:2px solid var(--border-line);"></a></div>` : '';
+
                 container.innerHTML += `
-                    <div class="list-item">
-                        <div class="item-header">
-                            <span class="item-title">${escapeHtml(x.title)}</span>
-                            <span class="badge ${badgeClass}">${escapeHtml(x.status)}</span>
+                    <div class="data-row-card">
+                        <div class="data-row-card-header">
+                            <span class="data-row-card-title">${escapeHtml(x.title)}</span>
+                            <span class="badge ${badgeClass}">${badgeText}</span>
                         </div>
-                        <div class="item-desc">${escapeHtml(x.description || 'Açıklama girilmemiş.')}</div>
-                        <div class="item-meta">
-                            <span>👤 Sorumlu: ${escapeHtml(x.userName)}</span>
-                            <span>📁 Kategori: ${escapeHtml(x.categoryName || 'Yok')}</span>
-                            <span>🆔 ID: #${x.id}</span>
+                        <div class="data-row-card-desc">${escapeHtml(x.description || '')}</div>
+                        ${imgHtml}
+                        <div class="data-row-card-meta">
+                            <span><strong>👤 ${lang('assignee_label')}:</strong> ${escapeHtml(x.userName)}</span>
+                            <span><strong>✍️ Görevi Veren:</strong> ${escapeHtml(x.createdByName)}</span>
+                            <span><strong>📁 ${lang('cat_label')}:</strong> ${escapeHtml(x.categoryName)}</span>
+                            <span><strong>📅 ${lang('start_label')}:</strong> ${new Date(x.startDate).toLocaleString()}</span>
+                            <span><strong>📅 ${lang('end_label')}:</strong> ${new Date(x.endDate).toLocaleString()}</span>
+                            <span><strong>⭐ ${lang('score')}:</strong> ${scoreText}</span>
                         </div>
-                        <div class="item-actions">
-                            <button onclick="startEditTask(${x.id}, '${escapeHtml(x.title)}', ${x.userId}, '${x.categoryId || ''}', '${escapeHtml(x.status)}', '${escapeHtml(x.description)}')">Düzenle</button>
-                            <button class="danger-btn" onclick="deleteTask(${x.id})">Sil</button>
-                        </div>
+                        <div class="data-row-card-actions">${actionsHtml}</div>
                     </div>`;
             });
+            translateStaticElements();
         }
 
         document.getElementById('taskForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const title = document.getElementById('taskTitle').value;
-            const userId = parseInt(document.getElementById('taskUserId').value);
-            const categoryId = document.getElementById('taskCategoryId').value ? parseInt(document.getElementById('taskCategoryId').value) : null;
-            const status = document.getElementById('taskStatus').value;
-            const description = document.getElementById('taskDescription').value;
-            const payload = { title, userId, categoryId, status, description };
+            const payload = {
+                title: document.getElementById('taskTitle').value,
+                userId: parseInt(document.getElementById('taskUserId').value),
+                categoryId: parseInt(document.getElementById('taskCategoryId').value),
+                startDate: document.getElementById('taskStartDate').value,
+                endDate: document.getElementById('taskEndDate').value,
+                description: document.getElementById('taskDescription').value,
+                status: "Pending"
+            };
+
             if (editingTaskId) payload.id = editingTaskId;
 
             const res = await fetch(editingTaskId ? `/api/tasks/${editingTaskId}` : '/api/tasks', {
@@ -244,32 +198,67 @@
                 headers: getAuthHeaders(),
                 body: JSON.stringify(payload)
             });
-            if(res.ok) { resetTaskForm(); fetchTasks(); }
+            if (res.ok) { resetTaskForm(); fetchTasks(); }
         });
 
-        function startEditTask(id, title, userId, categoryId, status, description) {
+        async function uploadCompletionFile(id) {
+            const fileInput = document.getElementById(`file_${id}`);
+            if (fileInput.files.length === 0) return;
+            
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+
+            const res = await fetch(`/api/tasks/${id}/complete`, {
+                method: 'POST',
+                headers: {
+                    'X-User-Id': localStorage.getItem('userId'),
+                    'X-User-Role': localStorage.getItem('userRole')
+                },
+                body: formData
+            });
+            if (res.ok) {
+                fetchTasks();
+            } else {
+                const errData = await res.json();
+                alert(errData.error || "Hata");
+                fetchTasks();
+            }
+        }
+
+        async function submitScore(id) {
+            const score = parseInt(document.getElementById(`score_val_${id}`).value);
+            if (isNaN(score) || score < 1 || score > 100) return alert("1-100!");
+
+            const res = await fetch(`/api/tasks/${id}/score`, {
+                method: 'POST',
+                headers: getAuthHeaders(),
+                body: JSON.stringify(score)
+            });
+            if (res.ok) fetchTasks();
+        }
+
+        function startEditTask(id, title, userId, categoryId, start, end, desc) {
             editingTaskId = id;
-            document.getElementById('taskFormTitle').textContent = "Görevi Düzenle (ID: #" + id + ")";
             document.getElementById('taskTitle').value = title;
             document.getElementById('taskUserId').value = userId;
             document.getElementById('taskCategoryId').value = categoryId;
-            document.getElementById('taskStatus').value = status;
-            document.getElementById('taskDescription').value = description;
+            document.getElementById('taskStartDate').value = start.substring(0,16);
+            document.getElementById('taskEndDate').value = end.substring(0,16);
+            document.getElementById('taskDescription').value = desc;
             document.getElementById('taskCancelBtn').classList.remove('hidden');
         }
 
         function resetTaskForm() {
             editingTaskId = null;
-            document.getElementById('taskFormTitle').textContent = "Yeni Görev Tanımla";
-            document.getElementById('taskCancelBtn').classList.add('hidden');
             document.getElementById('taskForm').reset();
+            document.getElementById('taskCancelBtn').classList.add('hidden');
             populateDropdowns();
         }
 
         async function deleteTask(id) {
-            if(!confirm("Bu görevi silmek istediğinize emin misiniz?")) return;
-            const res = await fetch(`/api/tasks/${id}`, {method: 'DELETE', headers: getAuthHeaders()});
-            if(res.ok) fetchTasks();
+            if (!confirm("Emin misiniz?")) return;
+            const res = await fetch(`/api/tasks/${id}`, { method: 'DELETE', headers: getAuthHeaders() });
+            if (res.ok) fetchTasks();
         }
 
         initPage();

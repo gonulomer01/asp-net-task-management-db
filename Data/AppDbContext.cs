@@ -21,6 +21,7 @@ namespace TaskManagementAPI.Data
                 entity.Property(e => e.Username).HasColumnName("username").IsRequired().HasMaxLength(50);
                 entity.Property(e => e.Password).HasColumnName("password").IsRequired().HasMaxLength(100);
                 entity.Property(e => e.Role).HasColumnName("role").IsRequired().HasMaxLength(20);
+                entity.Property(e => e.Department).HasColumnName("department").IsRequired().HasMaxLength(50);
                 entity.Property(e => e.Email).HasColumnName("email").HasMaxLength(100);
                 entity.Property(e => e.CreatedAt).HasColumnName("created_at");
             });
@@ -45,6 +46,11 @@ namespace TaskManagementAPI.Data
                 entity.Property(e => e.Status).HasColumnName("status").HasMaxLength(20);
                 entity.Property(e => e.UserId).HasColumnName("user_id");
                 entity.Property(e => e.CategoryId).HasColumnName("category_id");
+                entity.Property(e => e.CreatedById).HasColumnName("created_by_id");
+                entity.Property(e => e.StartDate).HasColumnName("start_date");
+                entity.Property(e => e.EndDate).HasColumnName("end_date");
+                entity.Property(e => e.CompletedImagePath).HasColumnName("completed_image_path");
+                entity.Property(e => e.AdminScore).HasColumnName("admin_score");
                 entity.Property(e => e.CreatedAt).HasColumnName("created_at");
 
                 entity.HasOne(d => d.User)
@@ -56,7 +62,7 @@ namespace TaskManagementAPI.Data
                     .WithMany(p => p.Tasks)
                     .HasForeignKey(d => d.CategoryId)
                     .OnDelete(DeleteBehavior.SetNull);
-                });
+            });
         }
     }
 }

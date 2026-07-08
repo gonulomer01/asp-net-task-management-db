@@ -3,131 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profilimi Düzenle</title>
-    <script>
-        if (!localStorage.getItem('userId')) {
-            window.location.href = '/login.html';
-        }
-        if (localStorage.getItem('theme') === 'dark') {
-            document.documentElement.classList.add('dark');
-        }
-    </script>
-    <style>
-        :root {
-            --bg-base: #ffffff;
-            --bg-side: #fafafa;
-            --text-title: #388ff9;
-            --text-main: #262626;
-            --border: #dbdbdb;
-            --input-bg: #ffffff;
-            --btn-bg: #111111;
-            --btn-text: #ffffff;
-        }
-        html.dark {
-            --bg-base: #0b0f19;
-            --bg-side: #111827;
-            --text-title: #388ff9;
-            --text-main: #f3f4f6;
-            --border: #1f2937;
-            --input-bg: #070a12;
-            --btn-bg: #ffffff;
-            --btn-text: #000000;
-        }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg-base); color: var(--text-main); margin: 0; padding: 24px; transition: background-color 0.3s, color 0.3s; }
-        .main-box { max-w: 400px; background: var(--bg-side); border-radius: 16px; padding: 24px; border: 1px solid var(--border); box-shadow: 0 1px 2px rgba(0,0,0,0.02); margin-top: 20px; }
-        h2 { margin-top: 0; color: var(--text-main); font-size: 18px; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
-        form { display: flex; flex-direction: column; gap: 16px; }
-        .form-group { display: flex; flex-direction: column; gap: 6px; }
-        .form-group label { font-size: 12px; font-weight: 600; color: var(--text-main); }
-        input { padding: 10px 16px; border: 1px solid var(--border); border-radius: 20px; font-size: 14px; background: var(--input-fill); color: var(--text-main); }
-        input:focus { border-color: var(--text-main); outline: none; }
-        button { padding: 10px; border: none; border-radius: 20px; background: var(--btn-bg); color: var(--btn-text); font-weight: 700; cursor: pointer; font-size: 14px; transition: background 0.2s; }
-        button:hover { opacity: 0.9; }
-        .back-btn { padding: 6px 14px; border: 1px solid var(--border); border-radius: 20px; background: var(--bg-side); color: var(--text-main); cursor: pointer; font-size: 13px; font-weight: 600; }
-    </style>
+    <title>Profil Ayarları</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="/js/shared.js"></script>
+    <script>if (!localStorage.getItem('userId')) { window.location.href = '/login.html'; }</script>
 </head>
 <body>
 
-    <div style="display: flex; justify-content: space-between; align-items: center; max-w: 400px;">
-        <button class="back-btn" onclick="window.location.href='/index.html'">← Geri Dön</button>
-        <button class="back-btn" onclick="toggleTheme()">Tema Değiştir</button>
+    <div class="system-view-header">
+        <div class="system-header-title-group">
+            <div class="corner-branding" data-key="site_title"></div>
+            <h1>KİŞİSEL PROFİL AYARLARI</h1>
+        </div>
+        <div id="headerRightActions" class="header-right-actions"></div>
     </div>
 
-    <div class="main-box">
-        <h2>Profil Ayarları</h2>
-        <form id="profileForm">
-            <div class="form-group">
-                <label>Kullanıcı Adı *</label>
-                <input type="text" id="profUsername" required>
-            </div>
-            <div class="form-group">
-                <label>Şifre *</label>
-                <input type="password" id="profPassword" required>
-            </div>
-            <div class="form-group">
-                <label>E-posta</label>
-                <input type="email" id="profEmail">
-            </div>
-            <button type="submit">Değişiklikleri Kaydet</button>
-        </form>
+    <div class="workspace-wrapper">
+        <div class="panel-card-form" style="width:100%; max-width:400px; margin:0 auto;">
+            <h2>Bilgilerimi Güncelle</h2>
+            <form id="profileForm">
+                <div class="field-block">
+                    <label data-key="username"></label>
+                    <input type="text" id="profUsername" required>
+                </div>
+                <div class="field-block">
+                    <label data-key="password"></label>
+                    <input type="password" id="profPassword" required>
+                </div>
+                <div class="field-block">
+                    <label data-key="email"></label>
+                    <input type="email" id="profEmail">
+                </div>
+                <div class="field-block">
+                    <label data-key="department"></label>
+                    <select id="profDepartment">
+                        <option value="Ar-Ge">Ar-Ge</option>
+                        <option value="Bilgi İşlem">Bilgi İşlem</option>
+                        <option value="İnsan Kaynakları">İnsan Kaynakları</option>
+                        <option value="Yönetim">Yönetim</option>
+                    </select>
+                </div>
+                <button type="submit" class="submit-core-btn" data-key="save"></button>
+            </form>
+        </div>
     </div>
 
     <script>
         const loggedInUserId = localStorage.getItem('userId');
         const loggedInUserRole = localStorage.getItem('userRole');
 
-        function toggleTheme() {
-            if (document.documentElement.classList.contains('dark')) {
-                document.documentElement.classList.remove('dark');
-                localStorage.setItem('theme', 'light');
-            } else {
-                document.documentElement.classList.add('dark');
-                localStorage.setItem('theme', 'dark');
-            }
-        }
-
         async function loadProfileData() {
             const res = await fetch('/api/users');
             const users = await res.json();
             const me = users.find(u => u.id == loggedInUserId);
-            
             if (me) {
                 document.getElementById('profUsername').value = me.username;
                 document.getElementById('profPassword').value = me.password;
                 document.getElementById('profEmail').value = me.email || '';
+                document.getElementById('profDepartment').value = me.department;
             }
         }
 
         document.getElementById('profileForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const username = document.getElementById('profUsername').value;
-            const password = document.getElementById('profPassword').value;
-            const email = document.getElementById('profEmail').value;
+            const department = document.getElementById('profDepartment').value;
 
             const payload = {
                 id: parseInt(loggedInUserId),
                 username: username,
-                password: password,
-                email: email,
+                password: document.getElementById('profPassword').value,
+                email: document.getElementById('profEmail').value,
+                department: department,
                 role: loggedInUserRole
             };
 
             const res = await fetch(`/api/users/${loggedInUserId}`, {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-User-Id': loggedInUserId,
-                    'X-User-Role': loggedInUserRole
-                },
+                headers: getAuthHeaders(),
                 body: JSON.stringify(payload)
             });
 
             if (res.ok) {
                 localStorage.setItem('username', username);
-                alert("Profil bilgileriniz başarıyla güncellendi.");
+                localStorage.setItem('userDept', department);
                 window.location.href = '/index.html';
-            } else {
-                alert("Güncelleme sırasında bir hata oluştu.");
             }
         });
 

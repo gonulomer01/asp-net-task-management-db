@@ -3,146 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kullanıcı Yönetimi</title>
-    <script>
-        if (!localStorage.getItem('userId') || localStorage.getItem('userRole') !== 'Admin') {
-            window.location.href = '/index.html';
-        }
-        if (localStorage.getItem('theme') === 'dark') {
-            document.documentElement.classList.add('dark');
-        }
-    </script>
-    <style>
-        :root {
-            --bg-base: #ffffff;
-            --bg-side: #fafafa;
-            --text-title: #388ff9;
-            --text-main: #262626;
-            --text-muted: #8e8e8e;
-            --border: #dbdbdb;
-            --input-bg: #ffffff;
-            --btn-bg: #111111;
-            --btn-text: #ffffff;
-            --item-bg: #f5f5f5;
-        }
-        html.dark {
-            --bg-base: #0b0f19;
-            --bg-side: #111827;
-            --text-title: #388ff9;
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
-            --border: #1f2937;
-            --input-bg: #070a12;
-            --btn-bg: #ffffff;
-            --btn-text: #000000;
-            --item-bg: #111827;
-        }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg-base); color: var(--text-main); margin: 0; padding: 24px; transition: background-color 0.3s, color 0.3s; }
-        .main-container { display: flex; gap: 24px; flex-wrap: wrap; margin-top: 20px; align-items: flex-start; }
-        .form-box { width: 360px; background: var(--bg-side); border-radius: 16px; padding: 24px; border: 1px solid var(--border); box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
-        .list-box { flex: 1; min-width: 400px; background: var(--bg-side); border-radius: 16px; padding: 24px; border: 1px solid var(--border); box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
-        h2, h3 { margin-top: 0; color: var(--text-main); font-size: 16px; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
-        form { display: flex; flex-direction: column; gap: 16px; }
-        .form-group { display: flex; flex-direction: column; gap: 6px; }
-        .form-group label { font-size: 12px; font-weight: 600; color: var(--text-main); }
-        input, select { padding: 8px 12px; border: 1px solid var(--border); border-radius: 20px; font-size: 14px; background: var(--input-bg); color: var(--text-main); }
-        input:focus, select:focus { border-color: var(--text-main); outline: none; }
-        button { padding: 8px 14px; border: 1px solid var(--border); border-radius: 20px; background: var(--bg-base); color: var(--text-main); cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s; }
-        button:hover { opacity: 0.8; }
-        .blue-btn { background: var(--btn-bg); color: var(--btn-text); border: none; padding: 12px; font-size: 14px; font-weight: 700; }
-        .danger-btn { color: #ef4444; border-color: #ef4444; background: var(--bg-base); }
-        .danger-btn:hover { background: #fef2f2; }
-        html.dark .danger-btn:hover { background: #451a1a; }
-        .list-item { padding: 14px; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; background: var(--bg-base); display: flex; justify-content: space-between; align-items: center; }
-        .item-title { font-weight: 700; font-size: 14px; color: var(--text-main); }
-        .item-desc { color: var(--text-muted); font-size: 13px; margin-top: 4px; }
-        .role-tag { font-size: 11px; padding: 2px 8px; border-radius: 12px; font-weight: 700; background: var(--border); color: var(--text-main); margin-left: 6px; text-transform: uppercase; }
-        .item-actions { display: flex; gap: 6px; }
-        .hidden { display: none; }
-    </style>
+    <title>Personel Yönetimi</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="/js/shared.js"></script>
+    <script>if (!localStorage.getItem('userId') || localStorage.getItem('userRole') !== 'Admin') { window.location.href = '/index.html'; }</script>
 </head>
 <body>
 
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-        <button onclick="window.location.href='/index.html'">← Geri Dön</button>
-        <button onclick="toggleTheme()">Tema Değiştir</button>
+    <div class="system-view-header">
+        <div class="system-header-title-group">
+            <div class="corner-branding" data-key="site_title"></div>
+            <h1>SİSTEM PERSONEL KONTROLÜ</h1>
+        </div>
+        <div id="headerRightActions" class="header-right-actions"></div>
     </div>
     
-    <div class="main-container">
-        <div class="form-box">
-            <h2 id="userFormTitle">Kullanıcı Ekle</h2>
-            <form id="userForm">
-                <div class="form-group">
-                    <label>Kullanıcı Adı *</label>
-                    <input type="text" id="userUsername" required>
-                </div>
-                <div class="form-group">
-                    <label>Şifre *</label>
-                    <input type="password" id="userPassword" required>
-                </div>
-                <div class="form-group">
-                    <label>E-posta</label>
-                    <input type="email" id="userEmail">
-                </div>
-                <div class="form-group">
-                    <label>Rol</label>
-                    <select id="userRole">
-                        <option value="User">User</option>
-                        <option value="Admin">Admin</option>
-                    </select>
-                </div>
-                <button type="submit" id="userSubmitBtn" class="blue-btn">Kaydet</button>
-                <button type="button" id="userCancelBtn" class="hidden" onclick="resetUserForm()">Vazgeç</button>
-            </form>
-        </div>
-
-        <div class="list-box">
-            <h3>Sistem Kullanıcıları</h3>
-            <div id="userList"></div>
+    <div class="workspace-wrapper">
+        <div class="layout-grid">
+            <div class="panel-card-form">
+                <h2>Personel Kaydı / Güncelleme</h2>
+                <form id="userForm">
+                    <div class="field-block">
+                        <label data-key="username"></label>
+                        <input type="text" id="userUsername" required>
+                    </div>
+                    <div class="field-block">
+                        <label data-key="password"></label>
+                        <input type="password" id="userPassword" required>
+                    </div>
+                    <div class="field-block">
+                        <label data-key="email"></label>
+                        <input type="email" id="userEmail">
+                    </div>
+                    <div class="field-block">
+                        <label data-key="department"></label>
+                        <select id="userDepartment">
+                            <option value="Ar-Ge">Ar-Ge</option>
+                            <option value="Bilgi İşlem">Bilgi İşlem</option>
+                            <option value="İnsan Kaynakları">İnsan Kaynakları</option>
+                            <option value="Yönetim">Yönetim</option>
+                        </select>
+                    </div>
+                    <div class="field-block">
+                        <label data-key="role"></label>
+                        <select id="userRole">
+                            <option value="User">User</option>
+                            <option value="Admin">Admin</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="submit-core-btn" data-key="save"></button>
+                </form>
+            </div>
+            <div class="panel-card-list">
+                <h3>Aktif Personel Listesi</h3>
+                <div id="userList"></div>
+            </div>
         </div>
     </div>
 
     <script>
         let editingUserId = null;
 
-        function getAuthHeaders() {
-            return {
-                'Content-Type': 'application/json',
-                'X-User-Id': localStorage.getItem('userId'),
-                'X-User-Role': localStorage.getItem('userRole')
-            };
-        }
-
-        function toggleTheme() {
-            if (document.documentElement.classList.contains('dark')) {
-                document.documentElement.classList.remove('dark');
-                localStorage.setItem('theme', 'light');
-            } else {
-                document.documentElement.classList.add('dark');
-                localStorage.setItem('theme', 'dark');
-            }
-        }
-
-        function escapeHtml(str) {
-            if (!str) return '';
-            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-        }
-
         async function fetchUsers() {
             const res = await fetch('/api/users');
             const data = await res.json();
             const container = document.getElementById('userList');
-            container.innerHTML = data.length === 0 ? '<p>Kayıtlı kullanıcı bulunmuyor.</p>' : '';
+            container.innerHTML = '';
             data.forEach(x => {
                 container.innerHTML += `
-                    <div class="list-item">
-                        <div>
-                            <div class="item-title">${escapeHtml(x.username)} <span class="role-tag">${escapeHtml(x.role)}</span></div>
-                            <div class="item-desc">${escapeHtml(x.email || 'E-posta belirtilmemiş.')}</div>
-                        </div>
-                        <div class="item-actions">
-                            <button onclick="startEditUser(${x.id}, '${escapeHtml(x.username)}', '${escapeHtml(x.password)}', '${escapeHtml(x.email || '')}', '${escapeHtml(x.role)}')">Düzenle</button>
-                            <button class="danger-btn" onclick="deleteUser(${x.id})">Sil</button>
+                    <div class="data-row-card">
+                        <div class="data-row-card-title">${escapeHtml(x.username)} <span class="role-tag">${escapeHtml(x.role)}</span></div>
+                        <div class="data-row-card-desc">📧 ${escapeHtml(x.email || 'Yok')} | 📊 Dept: ${escapeHtml(x.department)}</div>
+                        <div class="data-row-card-actions">
+                            <button onclick="startEditUser(${x.id}, '${escapeHtml(x.username)}', '${escapeHtml(x.password)}', '${escapeHtml(x.email || '')}', '${escapeHtml(x.role)}', '${escapeHtml(x.department)}')">${lang('action_edit')}</button>
+                            <button class="abort-btn" onclick="deleteUser(${x.id})">${lang('action_delete')}</button>
                         </div>
                     </div>`;
             });
@@ -150,12 +84,13 @@
 
         document.getElementById('userForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const username = document.getElementById('userUsername').value;
-            const password = document.getElementById('userPassword').value;
-            const email = document.getElementById('userEmail').value;
-            const role = document.getElementById('userRole').value;
-
-            const payload = { username, password, email, role };
+            const payload = {
+                username: document.getElementById('userUsername').value,
+                password: document.getElementById('userPassword').value,
+                email: document.getElementById('userEmail').value,
+                role: document.getElementById('userRole').value,
+                department: document.getElementById('userDepartment').value
+            };
             if (editingUserId) payload.id = editingUserId;
 
             const res = await fetch(editingUserId ? `/api/users/${editingUserId}` : '/api/users', {
@@ -163,30 +98,22 @@
                 headers: getAuthHeaders(),
                 body: JSON.stringify(payload)
             });
-            if(res.ok) { resetUserForm(); fetchUsers(); }
+            if (res.ok) { editingUserId = null; document.getElementById('userForm').reset(); fetchUsers(); }
         });
 
-        function startEditUser(id, username, password, email, role) {
+        function startEditUser(id, name, pass, email, role, dept) {
             editingUserId = id;
-            document.getElementById('userFormTitle').textContent = "Kullanıcıyı Düzenle";
-            document.getElementById('userUsername').value = username;
-            document.getElementById('userPassword').value = password;
+            document.getElementById('userUsername').value = name;
+            document.getElementById('userPassword').value = pass;
             document.getElementById('userEmail').value = email;
             document.getElementById('userRole').value = role;
-            document.getElementById('userCancelBtn').classList.remove('hidden');
-        }
-
-        function resetUserForm() {
-            editingUserId = null;
-            document.getElementById('userFormTitle').textContent = "Kullanıcı Ekle";
-            document.getElementById('userCancelBtn').classList.add('hidden');
-            document.getElementById('userForm').reset();
+            document.getElementById('userDepartment').value = dept;
         }
 
         async function deleteUser(id) {
-            if(!confirm("Kullanıcıyı silmek istediğinize emin misiniz?")) return;
-            const res = await fetch(`/api/users/${id}`, {method: 'DELETE', headers: getAuthHeaders()});
-            if(res.ok) { fetchUsers(); }
+            if (!confirm("Kullanıcı silinsin mi?")) return;
+            const res = await fetch(`/api/users/${id}`, { method: 'DELETE', headers: getAuthHeaders() });
+            if (res.ok) fetchUsers();
         }
 
         fetchUsers();

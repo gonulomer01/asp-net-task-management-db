@@ -3,60 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kayıt Ol</title>
-    <script>
-        if (localStorage.getItem('theme') === 'dark') {
-            document.documentElement.classList.add('dark');
-        }
-    </script>
-    <style>
-        :root {
-            --bg-base: #ffffff;
-            --bg-side: #052c5e;
-            --text-main: #262626;
-            --text-muted: #8e8e8e;
-            --border: #dbdbdb;
-            --input-bg: #ffffff;
-            --btn-bg: #111111;
-            --btn-text: #ffffff;
-        }
-        html.dark {
-            --bg-base: #0b0f19;
-            --bg-side: #0b1325;
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
-            --border: #1f2937;
-            --input-bg: #070a12;
-            --btn-bg: #ffffff;
-            --btn-text: #000000;
-        }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; background-color: var(--bg-base); color: var(--text-main); min-height: 100vh; transition: background-color 0.3s, color 0.3s; }
-        .top-nav { position: absolute; top: 24px; right: 24px; z-index: 10; }
-        .theme-btn { background: transparent; color: var(--text-main); border: 1px solid var(--border); padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 13px; font-weight: 600; }
-        .split-layout { display: flex; min-height: 100vh; }
-        .brand-side { flex: 1.2; background-color: var(--bg-side); display: flex; align-items: center; justify-content: center; padding: 40px; box-sizing: border-box; transition: background-color 0.3s; }
-        .brand-logo { max-width: 90%; max-height: 80vh; object-fit: contain; display: block; }
-        .form-side { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px; box-sizing: border-box; }
-        .form-container { width: 100%; max-width: 400px; }
-        form { display: flex; flex-direction: column; gap: 20px; }
-        .form-group { display: flex; flex-direction: column; gap: 8px; }
-        .form-group label { font-size: 13px; font-weight: 600; color: var(--text-main); }
-        input { background-color: var(--input-bg); border: 1px solid var(--border); border-radius: 24px; padding: 12px 20px; font-size: 14px; color: var(--text-main); box-sizing: border-box; width: 100%; }
-        input:focus { border-color: var(--text-main); outline: none; }
-        .submit-btn { background-color: var(--btn-bg); color: var(--btn-text); border: none; border-radius: 24px; padding: 14px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 10px; }
-        .meta-area { text-align: center; margin-top: 24px; font-size: 14px; color: var(--text-muted); }
-        .meta-area a { color: var(--text-main); text-decoration: none; font-weight: 700; }
-        .meta-area a:hover { text-decoration: underline; }
-        @media (max-width: 868px) {
-            .brand-side { display: none; }
-        }
-    </style>
+    <title>Hesap Oluştur</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="/js/shared.js"></script>
 </head>
 <body>
-
-    <div class="top-nav">
-        <button class="theme-btn" onclick="toggleTheme()">Tema Değiştir</button>
-    </div>
 
     <div class="split-layout">
         <div class="brand-side">
@@ -64,62 +15,59 @@
         </div>
         <div class="form-side">
             <div class="form-container">
+                <div class="site-context-title" data-key="site_title"></div>
                 <form id="registerForm">
-                    <div class="form-group">
-                        <label>Kullanıcı Adı *</label>
+                    <div class="field-block">
+                        <label data-key="username"></label>
                         <input type="text" id="regUsername" required autocomplete="off">
                     </div>
-                    <div class="form-group">
-                        <label>Şifre *</label>
+                    <div class="field-block">
+                        <label data-key="password"></label>
                         <input type="password" id="regPassword" required>
                     </div>
-                    <div class="form-group">
-                        <label>E-posta</label>
+                    <div class="field-block">
+                        <label data-key="email"></label>
                         <input type="email" id="regEmail" autocomplete="off">
                     </div>
-                    <button type="submit" class="submit-btn">Hesap oluştur</button>
+                    <div class="field-block">
+                        <label data-key="department"></label>
+                        <select id="regDepartment">
+                            <option value="Ar-Ge">Ar-Ge</option>
+                            <option value="Bilgi İşlem">Bilgi İşlem</option>
+                            <option value="İnsan Kaynakları">İnsan Kaynakları</option>
+                            <option value="Yönetim">Yönetim</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="submit-core-btn" data-key="register_btn"></button>
                 </form>
                 <div class="meta-area">
-                    Zaten hesabınız var mı? <a href="/login.html">Giriş yap</a>
+                    <span data-key="has_acc"></span><a href="/login.html" data-key="login_btn"></a>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        if (localStorage.getItem('userId')) {
-            window.location.href = '/index.html';
-        }
-
-        function toggleTheme() {
-            if (document.documentElement.classList.contains('dark')) {
-                document.documentElement.classList.remove('dark');
-                localStorage.setItem('theme', 'light');
-            } else {
-                document.documentElement.classList.add('dark');
-                localStorage.setItem('theme', 'dark');
-            }
-        }
+        if (localStorage.getItem('userId')) { window.location.href = '/index.html'; }
 
         document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const username = document.getElementById('regUsername').value;
             const password = document.getElementById('regPassword').value;
             const email = document.getElementById('regEmail').value;
-            const role = "User";
+            const department = document.getElementById('regDepartment').value;
 
             const res = await fetch('/api/auth/register', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ username, password, email, role })
+                body: JSON.stringify({ username, password, email, department, role: "User" })
             });
 
             if (res.ok) {
-                alert("Kayıt başarılı! Giriş ekranına yönlendiriliyorsunuz.");
+                alert("Kayıt başarılı.");
                 window.location.href = '/login.html';
             } else {
-                const data = await res.json();
-                alert("Hata: " + (data.error || "Kayıt başarısız."));
+                alert("Kayıt sırasında bir hata oluştu.");
             }
         });
     </script>

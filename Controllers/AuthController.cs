@@ -34,7 +34,7 @@ namespace TaskManagementAPI.Controllers
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == loginModel.Username && u.Password == loginModel.Password);
             if (user == null) return Unauthorized(new { error = "Geçersiz kullanıcı adı veya şifre." });
 
-            return Ok(new { id = user.Id, username = user.Username, role = user.Role });
+            return Ok(new { id = user.Id, username = user.Username, role = user.Role, department = user.Department });
         }
     }
 }

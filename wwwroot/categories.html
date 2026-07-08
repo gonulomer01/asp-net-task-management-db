@@ -4,136 +4,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kategori Yönetimi</title>
-    <script>
-        if (!localStorage.getItem('userId') || localStorage.getItem('userRole') !== 'Admin') {
-            window.location.href = '/index.html';
-        }
-        if (localStorage.getItem('theme') === 'dark') {
-            document.documentElement.classList.add('dark');
-        }
-    </script>
-    <style>
-        :root {
-            --bg-base: #ffffff;
-            --bg-side: #fafafa;
-            --text-title: #388ff9;
-            --text-main: #262626;
-            --text-muted: #8e8e8e;
-            --border: #dbdbdb;
-            --input-bg: #ffffff;
-            --btn-bg: #111111;
-            --btn-text: #ffffff;
-            --item-bg: #f5f5f5;
-        }
-        html.dark {
-            --bg-window: #000000;
-            --bg-base: #0b0f19;
-            --bg-side: #111827;
-            --text-heading: #ffffff;
-            --text-title: #388ff9;
-            --text-main: #f3f4f6;
-            --text-sub: #888888;
-            --border: #1f2937;
-            --input-fill: #030712;
-            --input-bg: #070a12;
-            --btn-bg: #ffffff;
-            --btn-text: #000000;
-            --item-bg: #111827;
-        }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg-base); color: var(--text-main); margin: 0; padding: 24px; transition: background-color 0.3s, color 0.3s; }
-        .main-container { display: flex; gap: 24px; flex-wrap: wrap; margin-top: 20px; align-items: flex-start; }
-        .form-box { width: 360px; background: var(--bg-side); border-radius: 16px; padding: 24px; border: 1px solid var(--border); box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
-        .list-box { flex: 1; min-width: 400px; background: var(--bg-side); border-radius: 16px; padding: 24px; border: 1px solid var(--border); box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
-        h2, h3 { margin-top: 0; color: var(--text-main); font-size: 16px; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
-        form { display: flex; flex-direction: column; gap: 16px; }
-        .form-group { display: flex; flex-direction: column; gap: 6px; }
-        .form-group label { font-size: 12px; font-weight: 600; color: var(--text-main); }
-        input { padding: 10px 16px; border: 1px solid var(--border); border-radius: 20px; font-size: 14px; background: var(--input-bg); color: var(--text-main); }
-        input:focus { border-color: var(--text-main); outline: none; }
-        button { padding: 8px 18px; border: 1px solid var(--border); border-radius: 20px; background: var(--bg-base); color: var(--text-main); cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s; }
-        button:hover { opacity: 0.8; }
-        .purple-btn { background: var(--btn-bg); color: var(--btn-text); border: none; padding: 12px; font-size: 14px; font-weight: 700; }
-        .danger-btn { color: #ef4444; border-color: #ef4444; background: var(--bg-base); }
-        .danger-btn:hover { background: #fef2f2; }
-        html.dark .danger-btn:hover { background: #451a1a; }
-        .list-item { padding: 16px; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; background: var(--bg-base); display: flex; justify-content: space-between; align-items: center; }
-        .item-title { font-weight: 700; font-size: 14px; color: var(--text-main); }
-        .item-desc { color: var(--text-muted); font-size: 13px; margin-top: 4px; }
-        .item-actions { display: flex; gap: 6px; }
-        .hidden { display: none; }
-    </style>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="/js/shared.js"></script>
+    <script>if (!localStorage.getItem('userId') || localStorage.getItem('userRole') !== 'Admin') { window.location.href = '/index.html'; }</script>
 </head>
 <body>
 
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-        <button onclick="window.location.href='/index.html'">← Geri Dön</button>
-        <button onclick="toggleTheme()">Tema Değiştir</button>
+    <div class="system-view-header">
+        <div class="system-header-title-group">
+            <div class="corner-branding" data-key="site_title"></div>
+            <h1>KATEGORİ KONTROL PANELİ</h1>
+        </div>
+        <div id="headerRightActions" class="header-right-actions"></div>
     </div>
     
-    <div class="main-container">
-        <div class="form-box">
-            <h2 id="categoryFormTitle">Kategori Ekle</h2>
-            <form id="categoryForm">
-                <div class="form-group">
-                    <label>Kategori Adı</label>
-                    <input type="text" id="categoryName" required>
-                </div>
-                <div class="form-group">
-                    <label>Açıklama</label>
-                    <input type="text" id="categoryDescription">
-                </div>
-                <button type="submit" id="categorySubmitBtn" class="purple-btn">Kaydet</button>
-                <button type="button" id="categoryCancelBtn" class="hidden" onclick="resetCategoryForm()">Vazgeç</button>
-            </form>
-        </div>
-
-        <div class="list-box">
-            <h3>Sistem Kategorileri</h3>
-            <div id="categoryList"></div>
+    <div class="workspace-wrapper">
+        <div class="layout-grid">
+            <div class="panel-card-form">
+                <h2>Yeni Kategori Ekle</h2>
+                <form id="categoryForm">
+                    <div class="field-block">
+                        <label>Kategori Adı *</label>
+                        <input type="text" id="categoryName" required>
+                    </div>
+                    <div class="field-block">
+                        <label>Açıklama / Detay</label>
+                        <input type="text" id="categoryDescription">
+                    </div>
+                    <button type="submit" class="submit-core-btn" data-key="save"></button>
+                </form>
+            </div>
+            <div class="panel-card-list">
+                <h3>Mevcut Kategoriler</h3>
+                <div id="categoryList"></div>
+            </div>
         </div>
     </div>
 
     <script>
         let editingCategoryId = null;
 
-        function getAuthHeaders() {
-            return {
-                'Content-Type': 'application/json',
-                'X-User-Id': localStorage.getItem('userId'),
-                'X-User-Role': localStorage.getItem('userRole')
-            };
-        }
-
-        function toggleTheme() {
-            if (document.documentElement.classList.contains('dark')) {
-                document.documentElement.classList.remove('dark');
-                localStorage.setItem('theme', 'light');
-            } else {
-                document.documentElement.classList.add('dark');
-                localStorage.setItem('theme', 'dark');
-            }
-        }
-
-        function escapeHtml(str) {
-            if (!str) return '';
-            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-        }
-
         async function fetchCategories() {
             const res = await fetch('/api/categories');
             const data = await res.json();
             const container = document.getElementById('categoryList');
-            container.innerHTML = data.length === 0 ? '<p>Kayıtlı kategori bulunmuyor.</p>' : '';
+            container.innerHTML = '';
             data.forEach(x => {
                 container.innerHTML += `
-                    <div class="list-item">
-                        <div>
-                            <div class="item-title">${escapeHtml(x.name)} <span style="font-weight:normal; font-size:11px; color:var(--text-muted);">#${x.id}</span></div>
-                            <div class="item-desc">${escapeHtml(x.description || 'Açıklama yok.')}</div>
-                        </div>
-                        <div class="item-actions">
-                            <button onclick="startEditCategory(${x.id}, '${escapeHtml(x.name)}', '${escapeHtml(x.description || '')}')">Düzenle</button>
-                            <button class="danger-btn" onclick="deleteCategory(${x.id})">Sil</button>
+                    <div class="data-row-card">
+                        <div class="data-row-card-title">${escapeHtml(x.name)}</div>
+                        <div class="data-row-card-desc">${escapeHtml(x.description || '')}</div>
+                        <div class="data-row-card-actions">
+                            <button onclick="startEditCategory(${x.id}, '${escapeHtml(x.name)}', '${escapeHtml(x.description || '')}')">${lang('action_edit')}</button>
+                            <button class="abort-btn" onclick="deleteCategory(${x.id})">${lang('action_delete')}</button>
                         </div>
                     </div>`;
             });
@@ -151,28 +74,19 @@
                 headers: getAuthHeaders(),
                 body: JSON.stringify(payload)
             });
-            if(res.ok) { resetCategoryForm(); fetchCategories(); }
+            if (res.ok) { editingCategoryId = null; document.getElementById('categoryForm').reset(); fetchCategories(); }
         });
 
-        function startEditCategory(id, name, description) {
+        function startEditCategory(id, name, desc) {
             editingCategoryId = id;
-            document.getElementById('categoryFormTitle').textContent = "Kategoriyi Düzenle";
             document.getElementById('categoryName').value = name;
-            document.getElementById('categoryDescription').value = description;
-            document.getElementById('categoryCancelBtn').classList.remove('hidden');
-        }
-
-        function resetCategoryForm() {
-            editingCategoryId = null;
-            document.getElementById('categoryFormTitle').textContent = "Kategori Ekle";
-            document.getElementById('categoryCancelBtn').classList.add('hidden');
-            document.getElementById('categoryForm').reset();
+            document.getElementById('categoryDescription').value = desc;
         }
 
         async function deleteCategory(id) {
-            if(!confirm("Kategoriyi silmek istediğinize emin misiniz?")) return;
-            const res = await fetch(`/api/categories/${id}`, {method: 'DELETE', headers: getAuthHeaders()});
-            if(res.ok) { fetchCategories(); }
+            if (!confirm("Silinsin mi?")) return;
+            const res = await fetch(`/api/categories/${id}`, { method: 'DELETE', headers: getAuthHeaders() });
+            if (res.ok) fetchCategories();
         }
 
         fetchCategories();
