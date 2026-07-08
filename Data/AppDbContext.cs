@@ -50,6 +50,7 @@ namespace TaskManagementAPI.Data
                 entity.Property(e => e.StartDate).HasColumnName("start_date");
                 entity.Property(e => e.EndDate).HasColumnName("end_date");
                 entity.Property(e => e.CompletedImagePath).HasColumnName("completed_image_path");
+                entity.Property(e => e.CompletionNote).HasColumnName("completion_note");
                 entity.Property(e => e.AdminScore).HasColumnName("admin_score");
                 entity.Property(e => e.CreatedAt).HasColumnName("created_at");
 

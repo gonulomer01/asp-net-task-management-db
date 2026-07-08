@@ -65,6 +65,7 @@ namespace TaskManagementAPI.Controllers
                     t.StartDate,
                     t.EndDate,
                     t.CompletedImagePath,
+                    t.CompletionNote,
                     t.AdminScore,
                     UserName = t.User != null ? t.User.Username : "Yok",
                     CategoryName = t.Category != null ? t.Category.Name : "Yok",
@@ -107,7 +108,7 @@ namespace TaskManagementAPI.Controllers
         }
 
         [HttpPost("{id}/complete")]
-        public async Task<IActionResult> CompleteTask(int id, [FromForm] IFormFile file)
+        public async Task<IActionResult> CompleteTask(int id, [FromForm] IFormFile file, [FromForm] string? completionNote)
         {
             if (!Request.Headers.TryGetValue("X-User-Id", out var userIdStr)) return Unauthorized();
             int loggedInUserId = int.Parse(userIdStr!);
@@ -121,7 +122,7 @@ namespace TaskManagementAPI.Controllers
             {
                 task.Status = "Başarısız";
                 await _context.SaveChangesAsync();
-                return BadRequest(new { error = "Tarih aralığı dışında işlem yapılamaz. Görev başarısız olarak işaretlendi." });
+                return BadRequest(new { error = "Tarih aralığı dışında işlem yapılamaz." });
             }
 
             if (file == null || file.Length == 0) return BadRequest();
@@ -138,6 +139,7 @@ namespace TaskManagementAPI.Controllers
             }
 
             task.CompletedImagePath = "/uploads/" + uniqueFileName;
+            task.CompletionNote = completionNote;
             task.Status = "Completed";
             await _context.SaveChangesAsync();
             return Ok();

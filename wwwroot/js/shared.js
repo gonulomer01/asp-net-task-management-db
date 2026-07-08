@@ -34,7 +34,13 @@ const dict = {
         action_score_btn: "Puanla",
         score_placeholder: "1-100 Puan",
         toggle_theme: "Temayı Değiştir",
-        toggle_lang: "Dili Değiştir (TR/EN)"
+        toggle_lang: "Dili Değiştir (TR/EN)",
+        task_assignee: "Sorumlu",
+        task_creator: "Görevi Veren",
+        task_category: "Kategori",
+        task_timeline: "Süreç",
+        task_score: "Değerlendirme",
+        task_note: "Personel Notu"
     },
     en: {
         site_title: "TASK MANAGEMENT SYSTEM",
@@ -71,7 +77,13 @@ const dict = {
         action_score_btn: "Score",
         score_placeholder: "1-100 Score",
         toggle_theme: "Change Theme",
-        toggle_lang: "Change Language (TR/EN)"
+        toggle_lang: "Change Language (TR/EN)",
+        task_assignee: "Responsible",
+        task_creator: "Creator",
+        task_category: "Category",
+        task_timeline: "Timeline",
+        task_score: "Evaluation",
+        task_note: "Staff Note"
     }
 };
 

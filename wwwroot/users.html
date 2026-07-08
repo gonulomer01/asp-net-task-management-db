@@ -72,14 +72,19 @@
             data.forEach(x => {
                 container.innerHTML += `
                     <div class="data-row-card">
-                        <div class="data-row-card-title">${escapeHtml(x.username)} <span class="role-tag">${escapeHtml(x.role)}</span></div>
-                        <div class="data-row-card-desc">📧 ${escapeHtml(x.email || 'Yok')} | 📊 Dept: ${escapeHtml(x.department)}</div>
+                        <div class="data-row-card-header">
+                            <div class="data-row-card-title">${escapeHtml(x.username)}</div>
+                        </div>
+                        <div class="data-row-card-desc">
+                            Mail: ${escapeHtml(x.email || 'Yok')} | Dept: ${escapeHtml(x.department)} | Rol: ${escapeHtml(x.role)}
+                        </div>
                         <div class="data-row-card-actions">
                             <button onclick="startEditUser(${x.id}, '${escapeHtml(x.username)}', '${escapeHtml(x.password)}', '${escapeHtml(x.email || '')}', '${escapeHtml(x.role)}', '${escapeHtml(x.department)}')">${lang('action_edit')}</button>
                             <button class="abort-btn" onclick="deleteUser(${x.id})">${lang('action_delete')}</button>
                         </div>
                     </div>`;
             });
+            translateStaticElements();
         }
 
         document.getElementById('userForm').addEventListener('submit', async (e) => {

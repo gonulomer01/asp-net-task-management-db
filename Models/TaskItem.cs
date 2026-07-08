@@ -14,6 +14,7 @@ namespace TaskManagementAPI.Models
         public DateTime StartDate { get; set; } = DateTime.Now;
         public DateTime EndDate { get; set; } = DateTime.Now;
         public string? CompletedImagePath { get; set; }
+        public string? CompletionNote { get; set; }
         public int? AdminScore { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 

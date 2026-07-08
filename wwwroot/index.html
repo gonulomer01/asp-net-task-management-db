@@ -13,18 +13,16 @@
     <div class="system-view-header">
         <div class="system-header-title-group">
             <div class="corner-branding" data-key="site_title"></div>
-            <h1 id="topInfoArea"></h1>
+            <h1 id="topInfoAreaUsername"></h1>
+            <div id="topInfoAreaRoleDept" style="font-size:13px; font-weight:700; color:var(--text-sub);"></div>
         </div>
         <div id="headerRightActions" class="header-right-actions"></div>
     </div>
 
     <div class="workspace-wrapper">
-        <div id="adminNavBlock" class="nav-bar hidden">
-            <button class="nav-link-btn" onclick="window.location.href='/categories.html'" data-key="btn_cats"></button>
-            <button class="nav-link-btn" onclick="window.location.href='/users.html'" data-key="btn_users"></button>
-            <button class="nav-link-btn" onclick="window.location.href='/profile.html'" data-key="btn_prof"></button>
-        </div>
-        <div id="userNavBlock" class="nav-bar">
+        <div class="nav-bar">
+            <button id="btnManageCategories" class="nav-link-btn hidden" onclick="window.location.href='/categories.html'" data-key="btn_cats"></button>
+            <button id="btnManageUsers" class="nav-link-btn hidden" onclick="window.location.href='/users.html'" data-key="btn_users"></button>
             <button class="nav-link-btn" onclick="window.location.href='/profile.html'" data-key="btn_prof"></button>
         </div>
 
@@ -77,10 +75,12 @@
         document.getElementById('listTitleHeader').textContent = getLang() === 'tr' ? "AKTİF GÖREV HAVUZU" : "ACTIVE TASK POOL";
 
         function initPage() {
-            document.getElementById('topInfoArea').textContent = localStorage.getItem('username') + " [" + loggedInUserRole + " - " + localStorage.getItem('userDept') + "]";
+            document.getElementById('topInfoAreaUsername').textContent = localStorage.getItem('username');
+            document.getElementById('topInfoAreaRoleDept').textContent = loggedInUserRole + " - " + localStorage.getItem('userDept');
+            
             if (loggedInUserRole === 'Admin') {
-                document.getElementById('adminNavBlock').classList.remove('hidden');
-                document.getElementById('userNavBlock').classList.add('hidden');
+                document.getElementById('btnManageCategories').classList.remove('hidden');
+                document.getElementById('btnManageUsers').classList.remove('hidden');
             }
             populateDropdowns();
             fetchTasks();
@@ -131,13 +131,16 @@
                     badgeClass = 'badge-failed';
                 }
 
-                const scoreText = x.adminScore ? `${lang('score')}: ${x.adminScore}/100` : lang('not_scored');
+                const scoreText = x.adminScore ? `${x.adminScore}/100` : lang('not_scored');
                 let actionsHtml = '';
 
                 if (x.status === 'Pending' && x.userId === loggedInUserId) {
                     actionsHtml += `
-                        <input type="file" id="file_${x.id}" style="display:none" onchange="uploadCompletionFile(${x.id})">
-                        <button onclick="document.getElementById('file_${x.id}').click()">${lang('action_complete_upload')}</button>
+                        <div class="completion-block-area">
+                            <input type="text" id="note_${x.id}" placeholder="Görev tamamlama notu yazın...">
+                            <input type="file" id="file_${x.id}" style="display:none" onchange="uploadCompletionFile(${x.id})">
+                            <button onclick="document.getElementById('file_${x.id}').click()">${lang('action_complete_upload')}</button>
+                        </div>
                     `;
                 }
 
@@ -149,13 +152,14 @@
                     
                     if (x.status === 'Completed' && x.createdById === loggedInUserId) {
                         actionsHtml += `
-                            <input type="number" id="score_val_${x.id}" min="1" max="100" data-placeholder-key="score_placeholder" style="width:100px; display:inline-block; margin-left:10px;">
+                            <input type="number" id="score_val_${x.id}" min="1" max="100" placeholder="1-100" style="width:100px; display:inline-block; margin-left:10px;">
                             <button onclick="submitScore(${x.id})">${lang('action_score_btn')}</button>
                         `;
                     }
                 }
 
-                let imgHtml = x.completedImagePath ? `<div style="margin:12px 0;"><a href="${x.completedImagePath}" target="_blank"><img src="${x.completedImagePath}" style="max-width:140px; border-radius:6px; border:2px solid var(--border-line);"></a></div>` : '';
+                let imgHtml = x.completedImagePath ? `<div style="margin:12px 0;"><a href="${x.completedImagePath}" target="_blank"><img src="${x.completedImagePath}" style="max-width:140px; border:2px solid var(--border-line);"></a></div>` : '';
+                let noteHtml = x.completionNote ? `<span><strong>📝 ${lang('task_note')}:</strong> ${escapeHtml(x.completionNote)}</span>` : '';
 
                 container.innerHTML += `
                     <div class="data-row-card">
@@ -166,12 +170,12 @@
                         <div class="data-row-card-desc">${escapeHtml(x.description || '')}</div>
                         ${imgHtml}
                         <div class="data-row-card-meta">
-                            <span><strong>👤 ${lang('assignee_label')}:</strong> ${escapeHtml(x.userName)}</span>
-                            <span><strong>✍️ Görevi Veren:</strong> ${escapeHtml(x.createdByName)}</span>
-                            <span><strong>📁 ${lang('cat_label')}:</strong> ${escapeHtml(x.categoryName)}</span>
-                            <span><strong>📅 ${lang('start_label')}:</strong> ${new Date(x.startDate).toLocaleString()}</span>
-                            <span><strong>📅 ${lang('end_label')}:</strong> ${new Date(x.endDate).toLocaleString()}</span>
-                            <span><strong>⭐ ${lang('score')}:</strong> ${scoreText}</span>
+                            <span><strong>👤 ${lang('task_assignee')}:</strong> ${escapeHtml(x.userName)}</span>
+                            <span><strong>✍️ ${lang('task_creator')}:</strong> ${escapeHtml(x.createdByName)}</span>
+                            <span><strong>📁 ${lang('task_category')}:</strong> ${escapeHtml(x.categoryName)}</span>
+                            <span><strong>📅 ${lang('task_timeline')}:</strong> ${new Date(x.startDate).toLocaleString()} - ${new Date(x.endDate).toLocaleString()}</span>
+                            ${noteHtml}
+                            <span><strong>⭐ ${lang('task_score')}:</strong> ${scoreText}</span>
                         </div>
                         <div class="data-row-card-actions">${actionsHtml}</div>
                     </div>`;
@@ -204,9 +208,11 @@
         async function uploadCompletionFile(id) {
             const fileInput = document.getElementById(`file_${id}`);
             if (fileInput.files.length === 0) return;
+            const completionNote = document.getElementById(`note_${id}`).value;
             
             const formData = new FormData();
             formData.append("file", fileInput.files[0]);
+            formData.append("completionNote", completionNote);
 
             const res = await fetch(`/api/tasks/${id}/complete`, {
                 method: 'POST',
@@ -216,13 +222,7 @@
                 },
                 body: formData
             });
-            if (res.ok) {
-                fetchTasks();
-            } else {
-                const errData = await res.json();
-                alert(errData.error || "Hata");
-                fetchTasks();
-            }
+            if (res.ok) fetchTasks();
         }
 
         async function submitScore(id) {
